@@ -153,13 +153,18 @@ namespace UI
                 Console.Write("Enter a field's hight: ");
             }
             int.TryParse(Console.ReadLine(), out int size);
-            if (IsOdd(size) && size >= 7)
+            if (IsOdd(size) && size >= 7 && size <= 27)
             {
                 return size;
             }
             else if (size < 7)
             {
                 Console.WriteLine("Enter a number bigger than 6");
+                return GetFieldSize(linearSize);
+            }
+            else if (size > 27)
+            {
+                Console.WriteLine("Enter a number smaller than 27");
                 return GetFieldSize(linearSize);
             }
             else
