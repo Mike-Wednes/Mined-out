@@ -10,25 +10,12 @@ namespace UI
 
         public void DisplayField(Field field)
         {
-            //char[,] table = RecordField(field);
             LogicCell[,] cells = field.GetCells();
             foreach(LogicCell cell in cells)
             {
                 DisplayCell(cell, field, fieldOffset);
             }
         }
-
-        /*
-        private char[,] RecordField(Field field)
-        {
-            char[,] table = new char[field.Y, field.X];
-            List<Cell> cells = field.GetCells();
-            foreach(Cell cell in cells)
-            {
-                table[cell.Y, cell.X] = IdentifyCell(cell, field);
-            }
-            return table;
-        }*/
 
         private char IdentifyCell(LogicCell cell, Field field)
         {   
@@ -43,7 +30,7 @@ namespace UI
                 case CellType.Space:
                     return ' ';
                 case CellType.Player:
-                    return field.MinesAroundCount(cell).ToString()[0];             //need to update
+                    return field.MinesAroundCount(cell).ToString()[0];
                 case CellType.OriginalWay:
                     return 'O';
                 case CellType.Mine:

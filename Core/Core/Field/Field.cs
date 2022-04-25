@@ -26,29 +26,14 @@
 
         private void GenerateField()
         {
-            MakeUpGorizontalWall();
+            MakeGorizontalWall(CellType.Finish, CellView.Invisible);
             MakeSideWall(0);
             MakeSideWall(X - 1);
-            MakeDownGorizontalWall();
+            MakeGorizontalWall(CellType.Space, CellView.Invisible, Y - 1);
             AddSpace();
             GenerateWay();
             AddMines();
             AddPlayer();
-        }
-
-        private void MakeDownGorizontalWall()
-        {
-            for (int i = 0; i < X; i++)
-            {
-                if (i >= (X - 3) / 2 && i <= (X + 1) / 2)
-                {
-                    LogicCells[Y - 1, i] = new LogicCell(i, Y - 1, CellType.Space);
-                }
-                else
-                {
-                    LogicCells[Y - 1, i] = new LogicCell(i, Y - 1, CellType.Border);
-                }
-            }
         }
 
         private void AddPlayer()
@@ -64,17 +49,17 @@
             }
         }
 
-        private void MakeUpGorizontalWall()
+        private void MakeGorizontalWall(CellType spaceType, CellView view, int y = 0)
         {
             for (int i = 0; i < X; i++)
             {
                 if (i >= (X - 3) / 2 && i <= (X + 1) / 2)
                 {
-                    LogicCells[0, i] = new LogicCell(i, 0, CellType.Finish, CellView.Invisible);
+                    LogicCells[y, i] = new LogicCell(i, y, spaceType, view);
                 }
                 else
                 {
-                    LogicCells[0, i] = new LogicCell(i, 0, CellType.Border);
+                    LogicCells[y, i] = new LogicCell(i, y, CellType.Border);
                 }                
             }
         }
