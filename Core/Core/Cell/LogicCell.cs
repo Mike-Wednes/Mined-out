@@ -11,34 +11,27 @@
         public bool IsMarked { get; set; } = false;
 
         public LogicCell()
-        {
-        }
+        {}
 
         public LogicCell(LogicCell cell)
+            :base(cell)
         {
-            this.X = cell.X;
-            this.Y = cell.Y;
             this.Type = cell.Type;
         }
 
         public LogicCell(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
+            :base(x, y)
+        {}
 
         public LogicCell(int x, int y, CellType type)
+            :base(x, y)
         {
-            X = x;
-            Y = y;
             Type = type;
         }
 
         public LogicCell(int x, int y, CellType type, CellView view)
+            :this(x, y, type)
         {
-            X = x;
-            Y = y;
-            Type = type;
             View = view;
         }
     }

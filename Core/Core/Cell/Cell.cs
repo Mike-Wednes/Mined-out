@@ -9,10 +9,8 @@
         public Cell() {}
 
         public Cell(Cell cell)
-        {
-            this.X = cell.X;
-            this.Y = cell.Y;
-        }
+            :this(cell.X, cell.Y)
+        {}
 
         public Cell(int x, int y)
         {
