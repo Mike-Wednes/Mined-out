@@ -1,14 +1,23 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
+    [DataContract]
     public class GraficCell : Cell
     {
+        [DataMember]
         public ConsoleColor Color { get; set; }
 
+        [DataMember]
         public ConsoleColor TextColor { get; set; }
 
+        [DataMember]
         public int Delay { get; set; }
 
+        [DataMember]
         public char Text { get; set; }
+
+        public GraficCell() { }
 
         public GraficCell(int x, int y, ConsoleColor color)
             :this(x, y, color, ' ', ConsoleColor.Gray)

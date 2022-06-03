@@ -20,6 +20,9 @@
     <Reference Include="Core">
       <HintPath>..\..\Core\Core\obj\Debug\net6.0\Core.dll</HintPath>
     </Reference>
+    <Reference Include="GraficRedactor">
+      <HintPath>..\..\GraficRedactor\bin\Debug\net6.0\GraficRedactor.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

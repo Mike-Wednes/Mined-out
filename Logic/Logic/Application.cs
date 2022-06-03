@@ -2,6 +2,7 @@
 using UI;
 using System;
 using System.Threading;
+using GraficRedactor;
 
 
 namespace Logic
@@ -19,11 +20,13 @@ namespace Logic
 
         public void Run()
         {
-            field = new Field(_interface.GetFieldSize("x"), _interface.GetFieldSize("y"));
-            Console.Clear();
-            _interface.DisplayKeys();
-            _interface.DisplayField(field);
-            while (ListenKeys()) { }
+            //field = new Field(_interface.GetFieldSize("x"), _interface.GetFieldSize("y"));
+            //Console.Clear();
+            //_interface.DisplayKeys();
+            //_interface.DisplayField(field);
+            //while (ListenKeys()) { }
+            Redactor red = new Redactor();
+            red.Start();
         }
 
 
@@ -40,11 +43,11 @@ namespace Logic
         private bool ListenKeys()
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
-            if (KeyCharacteristic.MoveKeys.Contains(key.Key))
+            if (typeof(Core.KeysGroups.MoveKeys).DoesEnumContainKey(key))
             {
                 return Move(key);
             }
-            else if (KeyCharacteristic.MarkKeys.Contains(key.Key))
+            else if (typeof(Core.KeysGroups.MarkKeys).DoesEnumContainKey(key))
             {
                 Mark(key);
             }

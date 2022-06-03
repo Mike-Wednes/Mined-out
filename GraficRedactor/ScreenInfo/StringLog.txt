@@ -1,0 +1,6 @@
+Name:ColorLabel;Coordinates:X:90;Y:0;Text:Color:;
+Name:TextLabel;Coordinates:X:90;Y:1;Text:Text:;
+Name:TextColorLabel;Coordinates:X:90;Y:2;Text:Text Color:;
+Name:DelayLabel;Coordinates:X:90;Y:3;Text:Delay:;
+Name:HotKayesLabel0;Coordinates:X:90;Y:5;Text:To eddit press;
+Name:HotKayesLabel1;Coordinates:X:90;Y:6;Text:correspond number;
