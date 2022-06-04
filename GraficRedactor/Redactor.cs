@@ -9,7 +9,13 @@ namespace GraficRedactor
     {
         private static string graficRootPath = @"../../../../../Grafics/";
 
-        private static string ScreenTextInfoPath = @"../../../../../GraficRedactor/ScreenInfo/StringLog.txt";
+        private static string LabelsInfoPath = @"../../../../../GraficRedactor/ScreenInfo/LabelsInfo.txt";
+
+        private static string DataPlaceInfoPath = @"../../../../../GraficRedactor/ScreenInfo/DataPlaceInfo.txt";
+
+        private StringInfo[] LabelsInfo;
+
+        private StringInfo[] DataPlaceInfo;
 
         private string path = "";
 
@@ -23,6 +29,8 @@ namespace GraficRedactor
         {
             cursor = new Cell(0, 0);
             currentCollection = new List<GraficCell>();
+            LabelsInfo = GetAllStringInfos(LabelsInfoPath);
+            DataPlaceInfo = GetAllStringInfos(DataPlaceInfoPath);
         }
 
         public void Start()
@@ -75,10 +83,12 @@ namespace GraficRedactor
 
         private void ResetCellDatafields()
         {
-            DisplayText("            ", StringInfos.TextDataCoordinates);
-            DisplayText("            ", new Cell(StringInfos.ColorDataCoordinates.X - 1, StringInfos.ColorDataCoordinates.Y));
-            DisplayText("            ", StringInfos.TextColorDataCoordinates);
-            DisplayText("            ", StringInfos.DelayDataCoordinates);
+            foreach(StringInfo info in DataPlaceInfo)
+            {
+                Cell coordinates = new Cell(info.Coordinates);
+                coordinates.X--;
+                DisplayText("           ", coordinates);
+            }
         }
 
         private GraficCell? GetCellWithCoordinates(Cell cell)
@@ -95,11 +105,33 @@ namespace GraficRedactor
 
         private void DisplayCellData(GraficCell cell)
         {
-            DisplayText(cell.Text.ToString(), StringInfos.TextDataCoordinates);
-            DisplayText(cell.Color.ToString(), StringInfos.ColorDataCoordinates);
-            DisplayCell(new GraficCell(StringInfos.ColorDataCoordinates.X - 1, StringInfos.ColorDataCoordinates.Y, cell.Color));
-            DisplayText(cell.TextColor.ToString(), StringInfos.TextColorDataCoordinates);
-            DisplayText(cell.Delay.ToString(), StringInfos.DelayDataCoordinates);
+            foreach(StringInfo info in DataPlaceInfo)
+            {
+                Cell coordinates = info.Coordinates;
+                string dataName = info.Name;
+                string value = GetPropertyValue(cell, dataName);
+                DisplayText(value, coordinates);   
+                if(dataName == "Color")
+                {
+                    GraficCell cellColoredCopy = new GraficCell(coordinates.X - 1, coordinates.Y, cell.Color);
+                    DisplayCell(cellColoredCopy);
+                }
+            }
+
+        }
+
+        private string GetPropertyValue(Cell cell, string propertyName)
+        {
+            string? propertyValue = cell.GetType().GetProperty(propertyName)?.GetValue(cell)?.ToString();
+            if (propertyValue != null)
+            {
+                return propertyValue;
+            }
+            else
+            {
+                return "ERROR while getting propertyValue";
+            }
+            
         }
 
         private Cell GetCellOffset(Direction dir)
@@ -238,27 +270,26 @@ namespace GraficRedactor
 
         private void DisplayHints()
         {
-            var stringInfos = GetAllStringInfos();
-            foreach (StringInfo stringInfo in stringInfos)
+            foreach (StringInfo stringInfo in LabelsInfo)
             {
                 DisplayText(stringInfo.Text, stringInfo.Coordinates);
             }
 
         }
 
-        private StringInfo[] GetAllStringInfos()
+        private StringInfo[] GetAllStringInfos(string path)
         {
-            var strings = GetLinesFromTxt();
+            var strings = GetLinesFromTxt(path);
             var info = strings.Select(g => StringInfo.Parse(g)).ToArray();
             return info;
         }
 
-        private List<string> GetLinesFromTxt()
+        private List<string> GetLinesFromTxt(string path)
         {
             List<string> lines = new List<string>();
             try
             {
-                using (var sr = new StreamReader(ScreenTextInfoPath))
+                using (var sr = new StreamReader(path))
                 {
                     while (!sr.EndOfStream)
                     {
