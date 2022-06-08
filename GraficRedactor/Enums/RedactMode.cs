@@ -7,5 +7,6 @@
         TextMode,
         TextColorMode,
         DelayMode,
+        ClosingMode,
     }
 }

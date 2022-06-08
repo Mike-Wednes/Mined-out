@@ -17,7 +17,12 @@ namespace Core
         [DataMember]
         public char Text { get; set; }
 
-        public GraficCell() { }
+        public GraficCell() 
+        {
+            Text = ' ';
+            X = -1;
+            Y = -1;
+        }
 
         public GraficCell(int x, int y, ConsoleColor color)
             :this(x, y, color, ' ', ConsoleColor.Gray)

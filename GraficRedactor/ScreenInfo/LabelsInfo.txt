@@ -1,6 +1,11 @@
-Name:ColorLabel;Coordinates:X:90;Y:0;Text:Color:;
-Name:TextLabel;Coordinates:X:90;Y:1;Text:Text:;
-Name:TextColorLabel;Coordinates:X:90;Y:2;Text:Text Color:;
-Name:DelayLabel;Coordinates:X:90;Y:3;Text:Delay:;
-Name:HotKayesLabel0;Coordinates:X:90;Y:5;Text:To eddit press;
-Name:HotKayesLabel1;Coordinates:X:90;Y:6;Text:correspond number;
+//HINTS
+Name:ColorLabel;Coordinates:X:90;Y:0;Text:1) Color:;
+Name:TextLabel;Coordinates:X:90;Y:1;Text:2) Text:;
+Name:TextColorLabel;Coordinates:X:90;Y:2;Text:3) Text Color:;
+Name:DelayLabel;Coordinates:X:90;Y:3;Text:4) Delay:;
+Name:HotKeyesLabel0;Coordinates:X:90;Y:5;Text:To eddit press;
+Name:HotKeyesLabel1;Coordinates:X:90;Y:6;Text:correspond number;
+Name:ExitKeyesLabel;Coordinates:X:90;Y:15;Text:To exit or save press ESC;
+//ADDITIONAL
+Name:AddCellLabel;Coordinates:X:90;Y:9;Text:Press ENTER to ADD cell;
+Name:SaveCollectionLabel;Coordinates:X:90;Y:9;Text:Collection saved;

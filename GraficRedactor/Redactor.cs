@@ -21,13 +21,21 @@ namespace GraficRedactor
 
         private Cell cursor;
 
+        private Cell cursorOutMenus;
+
         private List<GraficCell> currentCollection;
 
+        private GraficCell currentEdditingCell;
+
         private RedactMode mode = RedactMode.General;
+
+        private Palette palette;
 
         public Redactor()
         {
             cursor = new Cell(0, 0);
+            currentEdditingCell = new GraficCell();
+            palette = new Palette(new Cell(90, 8));
             currentCollection = new List<GraficCell>();
             LabelsInfo = GetAllStringInfos(LabelsInfoPath);
             DataPlaceInfo = GetAllStringInfos(DataPlaceInfoPath);
@@ -45,7 +53,7 @@ namespace GraficRedactor
             }
             else
             {
-                currentCollection = GetCollection();
+                currentCollection = GetCollection(path);
             }
             RedactingProcess();            
         }
@@ -87,7 +95,7 @@ namespace GraficRedactor
             {
                 Cell coordinates = new Cell(info.Coordinates);
                 coordinates.X--;
-                DisplayText("           ", coordinates);
+                DisplayText("                ", coordinates);
             }
         }
 
@@ -151,11 +159,25 @@ namespace GraficRedactor
 
         private void RedactingProcess()
         {
-            Console.Clear();
-            DisplayHints();
-            DisplayCollection();
+            Console.SetWindowSize(200, 50);
+            ClearAndPrintStandart();
             while (ListenKeys()) { }
 
+        }
+
+        private void ClearAndPrintStandart()
+        {
+            Console.Clear();
+            DisplayHints();
+            DisplayCollection(currentCollection);
+        }
+
+        private void ClearEnteringArea()
+        {
+            for(int i = 0; i < palette.Rows; i++)
+            {
+                DisplayText("                          ", palette.OffSet.X, palette.OffSet.Y + i);
+            }
         }
 
         private bool ListenKeys()
@@ -166,20 +188,177 @@ namespace GraficRedactor
                 HandleKeyGeneralMode(key);
                 return true;
             }
+            if (mode == RedactMode.ColorMode)
+            {
+                HandleKeyColorMode(key);
+                return true;
+            }
             return false;
         }
 
-        private void HandleKeyGeneralMode(ConsoleKeyInfo key)
+        private void HandleKeyColorMode(ConsoleKeyInfo? key)
+        {
+            DisplayPaletteIfNeeded();
+            if (key != null)
+            {
+                ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
+                CheckKeyDoMove(keyConverted);
+                CheckKeyEnterColor(keyConverted);
+                CheckKeyDoEscapeColor(keyConverted);
+            }
+        }
+
+        private void CheckKeyEnterColor(ConsoleKeyInfo key)
+        {
+            if (IsNeedEntering(key))
+            {
+                if (IsCursorAtPalette())
+                {
+                    SaveAndDisplayCellChanges("Color", palette.GetColor(cursor));
+                    ReturnToStandart(ClearEnteringArea);
+                }
+            }
+        }
+
+        private bool IsCursorAtPalette()
+        {
+            if(cursor.X >= palette.OffSet.X && cursor.X < palette.OffSet.X + palette.Cols)
+            {
+                if (cursor.Y >= palette.OffSet.Y && cursor.Y < palette.OffSet.Y + palette.Rows)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void CheckKeyEnterCell(ConsoleKeyInfo key)
+        {
+            if (IsNeedEntering(key))
+            {
+                EnterCell();
+            }
+        }
+
+        private void EnterCellIfEdditing()
+        {
+            if (!currentEdditingCell.Equals(new GraficCell()))
+            {
+                EnterCell();
+            }
+        }
+
+        private void EnterCell()
+        {
+            currentCollection.Add(currentEdditingCell);
+            currentEdditingCell = new GraficCell();
+            ReturnToStandart(ClearEnteringArea);
+        }
+
+        private void CheckKeyDoCloseRedacting(ConsoleKeyInfo key)
+        {
+            if (IsNeedLeaving(key))
+            {
+                Record(currentCollection);
+                var label = LabelsInfo.Where(g => g.Name == "SaveCollectionLabel").First();
+                DisplayText(label.Text, label.Coordinates);
+            }
+        }
+
+        private void SaveAndDisplayCellChanges(string changedProperty, object? change)
+        {
+            typeof(GraficCell).GetProperty(changedProperty)?.SetValue(currentEdditingCell, change);
+            currentEdditingCell.EqualizeCoordinates(cursorOutMenus);
+            DisplayCell(currentEdditingCell);
+        }
+
+        private void DisplayPaletteIfNeeded()
+        {
+            if (!palette.IsDisplayed)
+            {
+                ClearEnteringArea();
+                DisplayCollection(palette.GetPaletteList(), palette.OffSet);
+                palette.IsDisplayed = true;
+                cursorOutMenus = new Cell(cursor);
+                cursor.EqualizeCoordinates(palette.LastPosition);
+            }
+        }
+
+        private void CheckKeyDoEscapeColor(ConsoleKeyInfo key)
+        {
+            if (IsNeedLeaving(key))
+            {
+                ReturnToStandart(ClearAndPrintStandart);
+            }
+        }
+
+        private void ReturnToStandart(Action clearing)
+        {
+            SetMenuNotDisplayed();
+            mode = RedactMode.General;
+            clearing();
+            cursor.EqualizeCoordinates(cursorOutMenus);
+            DisplayCellIfEdditing();
+            Console.SetCursorPosition(cursor.X, cursor.Y);
+            HandleKeyGeneralMode(null);
+        }
+
+        private void DisplayCellIfEdditing()
+        {
+            if (!currentEdditingCell.Equals(new GraficCell()))
+            {
+                DisplayCell(currentEdditingCell);
+            }
+        }
+
+        private void SetMenuNotDisplayed()
+        {
+            palette.IsDisplayed = false;
+        }
+
+        private void HandleKeyGeneralMode(ConsoleKeyInfo? key)
+        {
+            if(!currentEdditingCell.Equals(new GraficCell()))
+            {
+                var enteringHintLabel = LabelsInfo.Where(g => g.Name == "AddCellLabel").First();
+                DisplayText(enteringHintLabel.Text, enteringHintLabel.Coordinates);
+            }
+            if (key != null)
+            {
+                ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
+                CheckKeyDoMove(keyConverted);
+                CheckKeyChangeMode(keyConverted);
+                CheckKeyEnterCell(keyConverted);
+                CheckKeyDoCloseRedacting(keyConverted);
+            }
+        }
+
+        private void HandleClosingMode(ConsoleKeyInfo key)
+        {
+
+        }
+
+        private void CheckKeyDoMove(ConsoleKeyInfo key)
         {
             if (typeof(GraficRedactor.KeysGroups.MoveKeys).DoesEnumContainKey(key))
             {
                 Move(key);
             }
-            else if (typeof(GraficRedactor.KeysGroups.ChooseModeKeys).DoesEnumContainKey(key))
+        }
+
+        private void CheckKeyChangeMode(ConsoleKeyInfo key)
+        {
+            if (typeof(GraficRedactor.KeysGroups.ChooseModeKeys).DoesEnumContainKey(key))
             {
                 ChangeMode(key);
             }
         }
+
+        private bool IsNeedEntering(ConsoleKeyInfo key) 
+            => key.Key == ConsoleKey.Enter;
+
+        private bool IsNeedLeaving(ConsoleKeyInfo key)
+            => key.Key == ConsoleKey.Escape;
 
         private void ChangeMode(ConsoleKeyInfo key)
         {
@@ -187,6 +366,7 @@ namespace GraficRedactor
             {
                 case ConsoleKey.D1:
                     mode = RedactMode.ColorMode;
+                    HandleKeyColorMode(null);
                     break;
                 case ConsoleKey.D2:
                     mode = RedactMode.TextMode;
@@ -196,6 +376,9 @@ namespace GraficRedactor
                     break;
                 case ConsoleKey.D4:
                     mode = RedactMode.DelayMode;
+                    break;
+                case ConsoleKey.Escape:
+                    mode = RedactMode.ClosingMode;
                     break;
             }
         }
@@ -217,32 +400,35 @@ namespace GraficRedactor
                     MoveCursor(Direction.Down);
                     break;
             }
+            EnterCellIfEdditing();
         }
 
-
-
-        private void DisplayCollection()
+        private void DisplayCollection(List<GraficCell> collection, Cell? offset = null)
         {
-            foreach(GraficCell cell in currentCollection)
+            foreach(GraficCell cell in collection)
             {
-                DisplayCell(cell);
+                DisplayCell(cell, offset);
             }
         }
 
-        private void DisplayCollectionAnimation()
+        private void DisplayCollectionAnimation(List<GraficCell> collection)
         {
-            foreach (GraficCell cell in currentCollection)
+            foreach (GraficCell cell in collection)
             {
                 DisplayCell(cell);
                 Thread.Sleep(cell.Delay);
             }
         }
 
-        private void DisplayCell(GraficCell cell)
+        private void DisplayCell(GraficCell cell, Cell? offset = null)
         {
+            if (offset == null)
+            {
+                offset = new Cell();
+            }
             Console.BackgroundColor = cell.Color;
             Console.ForegroundColor = cell.TextColor;
-            Console.SetCursorPosition(cell.X, cell.Y);
+            Console.SetCursorPosition(cell.X + offset.X, cell.Y + offset.Y);
             Console.Write(cell.Text);
             Console.SetCursorPosition(cursor.X, cursor.Y);
             ResetConsoleColors();
@@ -270,7 +456,8 @@ namespace GraficRedactor
 
         private void DisplayHints()
         {
-            foreach (StringInfo stringInfo in LabelsInfo)
+            var labels = LabelsInfo.Take(7);
+            foreach (StringInfo stringInfo in labels)
             {
                 DisplayText(stringInfo.Text, stringInfo.Coordinates);
             }
@@ -280,7 +467,7 @@ namespace GraficRedactor
         private StringInfo[] GetAllStringInfos(string path)
         {
             var strings = GetLinesFromTxt(path);
-            var info = strings.Select(g => StringInfo.Parse(g)).ToArray();
+            var info = strings.Where(g => !g.Contains('/')).Select(g => StringInfo.Parse(g)).ToArray();
             return info;
         }
 
@@ -335,7 +522,7 @@ namespace GraficRedactor
             }
         }
 
-        private List<GraficCell> GetCollection()
+        internal static List<GraficCell> GetCollection(string path)
         {
             var jsonformatter = new DataContractJsonSerializer(typeof(List<GraficCell>));
 
@@ -362,15 +549,23 @@ namespace GraficRedactor
             }
         }
 
-        private void Record(List<GraficCell> collection)
+        public void Record(List<GraficCell> collection)
         {
             var jsonformatter = new DataContractJsonSerializer(typeof(List<GraficCell>));
             try
             {
-                using (var file = new FileStream(path, FileMode.OpenOrCreate))
+                FileStream file;
+                if (!File.Exists(path))
                 {
-                    jsonformatter.WriteObject(file, currentCollection);
+                    file = new FileStream(path, FileMode.Create);
                 }
+                else
+                {
+                    file = new FileStream(path, FileMode.Truncate);
+                }
+                jsonformatter.WriteObject(file, currentCollection);
+                file.Dispose();
+
             }
             catch (Exception e)
             {

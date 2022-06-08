@@ -2,6 +2,7 @@
 {
     internal enum ChooseModeKeys
     {
+        Escape,
         D1,
         D2,
         D3,

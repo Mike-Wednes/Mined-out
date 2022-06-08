@@ -11,6 +11,11 @@ namespace GraficRedactor
 
         public string Name;
 
+        public StringInfo()
+        {
+                
+        }
+
         public StringInfo(string name, string text, Cell cell)
         {
             Name = name;
@@ -34,12 +39,10 @@ namespace GraficRedactor
         {
             Regex filter = new Regex(@"Name:(?<Name>.+);Coordinates:(?<Coordinates>X:\d+;Y:\d+;)Text:(?<Text>.*);");
             var match = filter.Matches(input).First();
-
             string name = match.Groups["Name"].Value;
             string coordinates = match.Groups["Coordinates"].Value;
             Cell cell = Cell.Parse(coordinates);
             string text = match.Groups["Text"].Value;
-
             return new StringInfo(name, text, cell);
         }
     }
