@@ -42,6 +42,10 @@ namespace Core
             :this(x, y, color, delay, ' ', ConsoleColor.Gray)
         {}
 
+        public GraficCell(GraficCell cell)
+            :this(cell.X, cell.Y, cell.Color, cell.Delay, cell.Text, cell.TextColor)
+        {}
+
         public GraficCell(int x, int y, ConsoleColor color, int delay, char text, ConsoleColor textColor)
         {
             X = x;

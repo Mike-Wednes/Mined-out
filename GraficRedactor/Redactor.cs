@@ -429,6 +429,7 @@ namespace GraficRedactor
                 CheckKeyDeleteLast(keyConverted);
                 CheckKeyDisplayAnimated(keyConverted);
                 CheckKeyDelete(keyConverted);
+                CheckKeyPasteCell(keyConverted);
             }
         }
 
@@ -551,6 +552,20 @@ namespace GraficRedactor
                     mode = RedactMode.ClosingMode;
                     HandleKeyClosingMode(null);
                     break;
+            }
+        }
+
+        private void CheckKeyPasteCell(ConsoleKeyInfo key)
+        {
+            if(key.Key == ConsoleKey.V)
+            {
+                var last = new GraficCell(currentCollection.Last());
+                if(last != null)
+                {
+                    last.EqualizeCoordinates(cursor);
+                    currentCollection.Add(last);
+                    DisplayCell(last);
+                }
             }
         }
 
