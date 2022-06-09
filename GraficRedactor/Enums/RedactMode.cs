@@ -2,7 +2,7 @@
 {
     internal enum RedactMode
     {
-        General,
+        GeneralMode,
         ColorMode,
         TextMode,
         TextColorMode,
