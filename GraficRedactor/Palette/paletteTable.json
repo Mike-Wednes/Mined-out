@@ -10,7 +10,7 @@
   {
     "X": 1,
     "Y": 0,
-    "Color": 1,
+    "Color": 15,
     "Delay": 0,
     "Text": " ",
     "TextColor": 7
@@ -122,7 +122,7 @@
   {
     "X": 3,
     "Y": 3,
-    "Color": 15,
+    "Color": 1,
     "Delay": 0,
     "Text": " ",
     "TextColor": 7

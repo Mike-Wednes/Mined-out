@@ -44,8 +44,8 @@ namespace GraficRedactor
             mode = RedactMode.General;
             cursor = new Cell(0, 0);
             currentEditingCell = new GraficCell();
-            paletteColor = new Palette(new Cell(90, 8));
-            paletteTextColor = new Palette(new Cell(90, 8));
+            paletteColor = new Palette(new Cell(140, 8));
+            paletteTextColor = new Palette(new Cell(140, 8));
             currentCollection = new List<GraficCell>();
         }
 
@@ -209,6 +209,9 @@ namespace GraficRedactor
                 case RedactMode.ClosingMode:
                     HandleKeyClosingMode(key);
                     return true;
+                case RedactMode.DelayMode:
+                    HandleKeyDelayMode();
+                    return true;
                 default:
                     return false;
             }
@@ -222,7 +225,7 @@ namespace GraficRedactor
                 ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
                 CheckKeyDoMove(keyConverted);
                 CheckKeyEnterColor(keyConverted, paletteTextColor, "TextColor");
-                CheckKeyDoEscapeColor(keyConverted);
+                CheckKeyEscapeColor(keyConverted);
             }
         }
 
@@ -234,7 +237,7 @@ namespace GraficRedactor
                 ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
                 CheckKeyDoMove(keyConverted);
                 CheckKeyEnterColor(keyConverted, paletteColor, "Color");
-                CheckKeyDoEscapeColor(keyConverted);
+                CheckKeyEscapeColor(keyConverted);
             }
         }
 
@@ -242,18 +245,36 @@ namespace GraficRedactor
         {
             ClearEnteringArea();
             PrintLabel("TextEditingLabel");
-            char ch = GetCellTextFromUser();
+            var answer = GetValueFromUser("TextEditingLabel");
+            char ch = ConvertToChar(answer);
             SaveAndDisplayCellChanges("Text", ch);
         }
 
-        private char GetCellTextFromUser()
+        private void HandleKeyDelayMode()
+        {
+            ClearEnteringArea();
+            PrintLabel("DelayEditingLabel");
+            var answer = GetValueFromUser("DelayEditingLabel");
+            int delay;
+            if(answer != null)
+            {
+                delay = int.Parse(answer);
+            }
+            else
+            {
+                delay = 0;
+            }
+            SaveAndDisplayCellChanges("Delay", delay);
+        }
+
+        private string? GetValueFromUser(string labelName)
         {
             cursorOutMenus = new Cell(cursor);
-            var textHint = LabelsInfo.Where(g => g.Name == "TextEditingLabel").First();
+            var textHint = LabelsInfo.Where(g => g.Name == labelName).First();
             Cell coordintes = new Cell(textHint.Coordinates.X + textHint.Text.Length + 2, textHint.Coordinates.Y);
             Console.SetCursorPosition(coordintes.X, coordintes.Y);
             string? text = Console.ReadLine();
-            return ConvertToChar(text);
+            return text;
         }
 
         private char ConvertToChar(string? text)
@@ -328,7 +349,7 @@ namespace GraficRedactor
         {
             currentCollection.Add(currentEditingCell);
             currentEditingCell = new GraficCell();
-            ReturnToStandart(ClearEnteringArea);
+            ReturnToStandart(ClearEnteringArea, false);
         }
 
         private void SaveAndDisplayCellChanges(string changedProperty, object? change)
@@ -351,7 +372,7 @@ namespace GraficRedactor
             }
         }
 
-        private void CheckKeyDoEscapeColor(ConsoleKeyInfo key)
+        private void CheckKeyEscapeColor(ConsoleKeyInfo key)
         {
             if (IsNeedLeaving(key))
             {
@@ -359,12 +380,15 @@ namespace GraficRedactor
             }
         }
 
-        private void ReturnToStandart(Action clearing)
+        private void ReturnToStandart(Action clearing, bool returnCursor = true)
         {
             SetPalettesNotDisplayed();
             mode = RedactMode.General;
             clearing();
-            cursor.EqualizeCoordinates(cursorOutMenus);
+            if (returnCursor)
+            {
+                cursor.EqualizeCoordinates(cursorOutMenus);
+            }
             DisplayCellIfEditing();
             Console.SetCursorPosition(cursor.X, cursor.Y);
             HandleKeyGeneralMode(null);
@@ -402,6 +426,51 @@ namespace GraficRedactor
                 CheckKeyDoMove(keyConverted);
                 CheckKeyChangeMode(keyConverted);
                 CheckKeyEnterCell(keyConverted);
+                CheckKeyDeleteLast(keyConverted);
+                CheckKeyDisplayAnimated(keyConverted);
+                CheckKeyDelete(keyConverted);
+            }
+        }
+
+        private void CheckKeyDelete(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.Delete)
+            {
+                var index = currentCollection.FindLastIndex(g => g.Equals(cursor));
+                if (index != -1)
+                {
+                    currentCollection.RemoveAt(index);
+                    ClearAndPrintStandart();
+                }
+            }
+        }
+
+        private void CheckKeyDisplayAnimated(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.A)
+            {
+                Console.Clear();
+                DisplayHints();
+                DisplayCollectionAnimation(currentCollection);
+            }
+        }
+
+        private void CheckKeyDeleteLast(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.Backspace)
+            {
+                if (currentCollection.Count > 0)
+                {
+                    if (currentEditingCell.Equals(new GraficCell()))
+                    {
+                        currentCollection.RemoveAt(currentCollection.Count - 1);
+                    }
+                    else
+                    {
+                        currentEditingCell = new GraficCell();
+                    }
+                }
+                ClearAndPrintStandart();
             }
         }
 
@@ -424,7 +493,7 @@ namespace GraficRedactor
             {
                 Record(currentCollection);
                 ClearEnteringArea();
-                PrintLabel("SaveCollectionLabel");
+                Start();
             }
         }
 
@@ -476,6 +545,7 @@ namespace GraficRedactor
                     break;
                 case ConsoleKey.D4:
                     mode = RedactMode.DelayMode;
+                    HandleKeyDelayMode();
                     break;
                 case ConsoleKey.Escape:
                     mode = RedactMode.ClosingMode;
