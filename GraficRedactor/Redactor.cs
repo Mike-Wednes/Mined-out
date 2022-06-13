@@ -184,7 +184,7 @@ namespace GraficRedactor
         internal void ClearAndPrintStandart()
         {
             Console.Clear();
-            DisplayHints();
+            DisplayLabelsByTag("PL");
             DisplayCollection(currentCollection);
         }
 
@@ -271,6 +271,81 @@ namespace GraficRedactor
             }
         }
 
+        internal void AddLine()
+        {
+            GraficCell start = new GraficCell(currentCollection.Last());
+            if (start != null)
+            {
+                Cell finish = new Cell(cursor);
+                string differentProperty = GetDifferentProperty(start, finish);
+                if (differentProperty != "both")
+                {
+                    int startValue = GetCellPropValue(differentProperty, start);
+                    int endValue = GetCellPropValue(differentProperty, finish);
+                    int added = 0;
+                    int length = Math.Abs(startValue - endValue);
+                    IncrementDoToDirecion(ref startValue, endValue);
+                    do
+                    {
+                        GraficCell newCell = new GraficCell(start);
+                        typeof(GraficCell).GetProperty(differentProperty)?.SetValue(newCell, startValue);
+                        currentCollection.Add(newCell);
+                        DisplayCell(newCell);
+                        IncrementDoToDirecion(ref startValue, endValue);
+                        added++;
+                    }
+                    while (added != length);
+                }
+            }
+        }
+
+        internal void IncrementDoToDirecion(ref int startValue, int endValue)
+        {
+            if (Math.Max(startValue, endValue) == endValue)
+            {
+                startValue++;
+            }
+            else
+            {
+                startValue--;
+            }
+        }
+
+        internal void DisplayLabelsByTag(string tag)
+        {
+            var labels = GetLabelsByTag(tag);
+            foreach (var label in labels)
+            {
+                DisplayText(label.Text, label.Coordinates);
+            }
+        }
+
+        private int GetCellPropValue(string propName, object cell)
+        {
+            var value = cell.GetType().GetProperty(propName)?.GetValue(cell);
+            if (value != null)
+            {
+                return (int)value;
+            }
+            else
+            {
+                throw new Exception("Didn't find");
+            }
+        }
+
+        private string GetDifferentProperty(Cell one, Cell second)
+        {
+            if (one.X == second.X)
+            {
+                return "Y";
+            }
+            else if (one.Y == second.Y)
+            {
+                return "X";
+            }
+            return "both";
+        }
+
         private void SetPalettesNotDisplayed()
         {
             paletteColor.IsDisplayed = false;
@@ -306,6 +381,10 @@ namespace GraficRedactor
                 case ConsoleKey.Escape:
                     mode = RedactMode.ClosingMode;
                     keyHandler.ClosingMode(null);
+                    break;
+                case ConsoleKey.H:
+                    mode = RedactMode.HotKeysMode;
+                    keyHandler.HotKeysMode(null);
                     break;
             }
         }
@@ -374,20 +453,17 @@ namespace GraficRedactor
             Console.SetCursorPosition(cursor.X, cursor.Y);
         }
 
-        private void DisplayText(string text, Cell offset)
+        internal void DisplayText(string text, Cell offset)
         {
             Console.SetCursorPosition(offset.X, offset.Y);
             Console.Write(text);
             Console.SetCursorPosition(cursor.X, cursor.Y);
         }
 
-        internal void DisplayHints()
+        internal StringInfo[] GetLabelsByTag(string tag)
         {
-            var labels = LabelsInfo.Take(7);
-            foreach (StringInfo stringInfo in labels)
-            {
-                DisplayText(stringInfo.Text, stringInfo.Coordinates);
-            }
+            var stringInfos = LabelsInfo.Where(g => g.Name.Contains(tag + "_")).ToArray();
+            return stringInfos;
         }
 
         private StringInfo[] GetAllStringInfos(string path)

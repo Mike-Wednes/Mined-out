@@ -8,5 +8,6 @@
         TextColorMode,
         DelayMode,
         ClosingMode,
+        HotKeysMode,
     }
 }

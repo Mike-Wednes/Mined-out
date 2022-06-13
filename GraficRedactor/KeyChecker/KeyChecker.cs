@@ -30,11 +30,19 @@ namespace GraficRedactor
             }
         }
 
-        internal void EscapeColor(ConsoleKeyInfo key)
+        internal void AddLine(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.R)
+            {
+                redactor.AddLine();
+            }
+        }
+
+        internal void EscapeToStandart(ConsoleKeyInfo key, bool returnCursor = true)
         {
             if (key.Key == ConsoleKey.Escape)
             {
-                redactor.ReturnToStandart(redactor.ClearAndPrintStandart);
+                redactor.ReturnToStandart(redactor.ClearAndPrintStandart, returnCursor);
             }
         }
 
@@ -70,7 +78,7 @@ namespace GraficRedactor
             if (key.Key == ConsoleKey.A)
             {
                 Console.Clear();
-                redactor.DisplayHints();
+                redactor.DisplayLabelsByTag("PL");
                 redactor.DisplayCollectionAnimation(redactor.currentCollection);
             }
         }

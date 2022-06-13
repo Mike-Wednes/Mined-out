@@ -1,11 +1,19 @@
-//HINTS
-Name:ColorLabel;Coordinates:X:140;Y:0;Text:1) Color:;
-Name:TextLabel;Coordinates:X:140;Y:1;Text:2) Text:;
-Name:TextColorLabel;Coordinates:X:140;Y:2;Text:3) Text Color:;
-Name:DelayLabel;Coordinates:X:140;Y:3;Text:4) Delay:;
-Name:HotKeyesLabel0;Coordinates:X:140;Y:5;Text:To eddit press;
-Name:HotKeyesLabel1;Coordinates:X:140;Y:6;Text:correspond number;
-Name:ExitKeyesLabel;Coordinates:X:140;Y:15;Text:To exit or save press ESC;
+//Property Labels and Hints
+Name:PL_ColorLabel;Coordinates:X:140;Y:0;Text:1) Color:;
+Name:PL_TextLabel;Coordinates:X:140;Y:1;Text:2) Text:;
+Name:PL_TextColorLabel;Coordinates:X:140;Y:2;Text:3) Text Color:;
+Name:PL_DelayLabel;Coordinates:X:140;Y:3;Text:4) Delay:;
+Name:PL_Hotkeys;Coordinates:X:140;Y:5;Text:H - HOTKEYS;
+//HotKeys
+Name:HK_Label;Coordinates:X:10;Y:1;Text:1         - Edit Color;
+Name:HK_Label;Coordinates:X:10;Y:2;Text:2         - Edit Text;
+Name:HK_Label;Coordinates:X:10;Y:3;Text:3         - Edit Text Color;
+Name:HK_Label;Coordinates:X:10;Y:4;Text:4         - Edit Delay;
+Name:HK_Label;Coordinates:X:10;Y:6;Text:Backspace - Delete last cell;
+Name:HK_Label;Coordinates:X:10;Y:7;Text:Delete    - Delete current cell;
+Name:HK_Label;Coordinates:X:10;Y:8;Text:V         - Daste last cell;
+Name:HK_Label;Coordinates:X:10;Y:9;Text:A         - Play Animation;
+Name:HK_Label;Coordinates:X:10;Y:10;Text:R         - Add Line;
 //ADDITIONAL
 Name:AddCellLabel;Coordinates:X:140;Y:9;Text:Press ENTER to ADD cell;
 Name:SaveCollectionLabel;Coordinates:X:140;Y:9;Text:Collection saved;

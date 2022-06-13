@@ -30,6 +30,7 @@ namespace GraficRedactor
                 checker.DisplayAnimated(keyConverted);
                 checker.Delete(keyConverted);
                 checker.PasteCell(keyConverted);
+                checker.AddLine(keyConverted);
             }
         }
 
@@ -41,7 +42,7 @@ namespace GraficRedactor
                 ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
                 checker.DoMove(keyConverted);
                 checker.EnterColor(keyConverted, redactor.paletteColor, "Color");
-                checker.EscapeColor(keyConverted);
+                checker.EscapeToStandart(keyConverted);
             }
         }
 
@@ -90,7 +91,18 @@ namespace GraficRedactor
                 ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
                 checker.DoMove(keyConverted);
                 checker.EnterColor(keyConverted, redactor.paletteTextColor, "TextColor");
-                checker.EscapeColor(keyConverted);
+                checker.EscapeToStandart(keyConverted);
+            }
+        }
+
+        public void HotKeysMode(ConsoleKeyInfo? key)
+        {
+            Console.Clear();
+            redactor.DisplayLabelsByTag("HK");
+            if (key != null)
+            {
+                ConsoleKeyInfo keyConverted = (ConsoleKeyInfo)key;
+                checker.EscapeToStandart(keyConverted, false);
             }
         }
 
