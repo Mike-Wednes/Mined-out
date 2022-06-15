@@ -17,7 +17,7 @@ namespace GraficRedactor
 
         private StringInfo[] DataPlaceInfo;
 
-        private string path = "";
+        private string? path;
 
         internal Cell cursor;
 
@@ -43,6 +43,7 @@ namespace GraficRedactor
 
         private void SetDefault()
         {
+            path = "";
             keyHandler = new KeyHandler(this);
             mode = RedactMode.GeneralMode;
             cursor = new Cell(0, 0);
@@ -58,18 +59,21 @@ namespace GraficRedactor
         {
             SetDefault();
             path = RecordAndGetPath();
-            if (!File.Exists(path))
+            if (path != null)
             {
-                if (CheckFileCreatingNeed() == false) 
+                if (!File.Exists(path))
                 {
-                    Start();
+                    if (CheckFileCreatingNeed() == false)
+                    {
+                        Start();
+                    }
                 }
-            }
-            else
-            {
-                currentCollection = GetCollection(path);
-            }
-            RedactingProcess();            
+                else
+                {
+                    currentCollection = GetCollection(path);
+                }
+                RedactingProcess();
+            }       
         }
 
         internal string GetRootPath()
@@ -179,6 +183,7 @@ namespace GraficRedactor
             Console.SetWindowSize(200, 50);
             ClearAndPrintStandart();
             while (ListenKeys()) { }
+            Console.SetWindowSize(100, 25);
         }
 
         internal void ClearAndPrintStandart()
@@ -200,8 +205,16 @@ namespace GraficRedactor
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
             keyHandler.GetType().GetMethod(mode.ToString())?.Invoke(keyHandler, new object[] { key });
-            return true;
-
+            if(mode == RedactMode.ClosingMode)
+            {
+                key = Console.ReadKey(true);
+                keyHandler.GetType().GetMethod(mode.ToString())?.Invoke(keyHandler, new object[] { key });
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         internal string? GetValueFromUser(string labelName)
@@ -497,13 +510,20 @@ namespace GraficRedactor
             return lines;
         }
 
-        private string RecordAndGetPath()
+        private string? RecordAndGetPath()
         {
             Console.Clear();
             Console.WriteLine("Enter name:");
             string? name = Console.ReadLine();
-            path = graficRootPath + name + ".json";
-            return path;
+            if (name != "")
+            {
+                path = graficRootPath + name + ".json";
+                return path;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private bool CheckFileCreatingNeed()

@@ -71,9 +71,13 @@ namespace GraficRedactor
                         res = ' ';
                     }
                 }
-                else
+                else if (text.Count() == 1)
                 {
                     res = text.First();
+                }
+                else
+                {
+                    res = ' ';
                 }
             }
             else

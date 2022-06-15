@@ -4,18 +4,16 @@ namespace UI
 {
     public interface IInterface
     {
-        public void DisplayField(Field field);
-
-        public void DisplayKeys();
-
         public int GetFieldSize(string linearSize);
 
-        public void Move(List<LogicCell> vector, Field field);
+        public void Move(List<LogicCell> vector, Field field, Cell fieldOffset);
 
-        public void DisplayCell(LogicCell cell, Field field);
+        public void DisplayCell(LogicCell cell, Field field, Cell fieldOffset);
 
-        public void GameOver();
+        public void DisplayCellsByType(CellType type, Field field, Cell fieldOffset);
 
-        public void Success();
+        public void PrintGrafic(string name, Cell offset);
+
+        public void Clear();
     }
 }
