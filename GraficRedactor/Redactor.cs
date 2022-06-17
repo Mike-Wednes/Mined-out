@@ -312,6 +312,55 @@ namespace GraficRedactor
             }
         }
 
+        internal void Delete()
+        {
+            Delete(cursor);
+        }
+
+        internal void Delete(Cell cell, bool doClear = true)
+        {
+            var index = currentCollection.FindLastIndex(g => g.Equals(cell));
+            if (index != -1)
+            {
+                currentCollection.RemoveAt(index);
+                if (doClear)
+                {
+                    ClearAndPrintStandart();
+                }
+            }
+        }
+
+        internal void DeleteLine()
+        {
+            GraficCell start = new GraficCell(currentCollection.Last());
+            if (start != null)
+            {
+                Cell finish = new Cell(cursor);
+                if (!start.Equals(finish))
+                {
+                    string differentProperty = GetDifferentProperty(start, finish);
+                    if (differentProperty != "both")
+                    {
+                        int startValue = GetCellPropValue(differentProperty, start);
+                        int endValue = GetCellPropValue(differentProperty, finish);
+                        int changed = 0;
+                        int length = Math.Abs(startValue - endValue);
+                        do
+                        {
+                            GraficCell cell = new GraficCell(start);
+                            typeof(GraficCell).GetProperty(differentProperty)?.SetValue(cell, startValue);
+                            Delete(cell, false);
+                            IncrementDoToDirecion(ref startValue, endValue);
+                            changed++;
+                        }
+                        while (changed != length);
+
+                    }
+                }
+            }
+            ClearAndPrintStandart();
+        }
+
         internal void IncrementDoToDirecion(ref int startValue, int endValue)
         {
             if (Math.Max(startValue, endValue) == endValue)

@@ -14,6 +14,7 @@ Name:HK_Label;Coordinates:X:10;Y:7;Text:Delete    - Delete current cell;
 Name:HK_Label;Coordinates:X:10;Y:8;Text:V         - Daste last cell;
 Name:HK_Label;Coordinates:X:10;Y:9;Text:A         - Play Animation;
 Name:HK_Label;Coordinates:X:10;Y:10;Text:R         - Add Line;
+Name:HK_Label;Coordinates:X:10;Y:11;Text:H         - Delete Line;
 //ADDITIONAL
 Name:AddCellLabel;Coordinates:X:140;Y:9;Text:Press ENTER to ADD cell;
 Name:SaveCollectionLabel;Coordinates:X:140;Y:9;Text:Collection saved;

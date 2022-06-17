@@ -29,6 +29,7 @@ namespace GraficRedactor
                 checker.DeleteLast(keyConverted);
                 checker.DisplayAnimated(keyConverted);
                 checker.Delete(keyConverted);
+                checker.DeleteLine(keyConverted);
                 checker.PasteCell(keyConverted);
                 checker.AddLine(keyConverted);
             }

@@ -87,12 +87,15 @@ namespace GraficRedactor
         {
             if (key.Key == ConsoleKey.Delete)
             {
-                var index = redactor.currentCollection.FindLastIndex(g => g.Equals(redactor.cursor));
-                if (index != -1)
-                {
-                    redactor.currentCollection.RemoveAt(index);
-                    redactor.ClearAndPrintStandart();
-                }
+                redactor.Delete();
+            }
+        }
+
+        internal void DeleteLine(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.T)
+            {
+                redactor.DeleteLine();
             }
         }
 
