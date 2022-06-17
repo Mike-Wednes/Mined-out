@@ -3,6 +3,7 @@ using Core;
 using UI;
 using System.Runtime.Serialization.Json;
 using GraficRedactor;
+using System.Diagnostics;
 
 namespace Logic
 {
@@ -10,9 +11,7 @@ namespace Logic
     {
         private IInterface _interface;
 
-        private int cursorLevel;
-
-        private int gorizontalCursoLevel;
+        private Dictionary<SceneType, int> cursorLevels;
 
         private bool isSceneDisplayed;
 
@@ -21,10 +20,19 @@ namespace Logic
         public SceneHandler(IInterface UI)
         {
             _interface = UI;
-            cursorLevel = 0;
-            gorizontalCursoLevel = 1;
+            cursorLevels = new Dictionary<SceneType, int>();
+            SetCursorLevels();
             isSceneDisplayed = false;
             scenes = GetAllScenes();
+        }
+
+        private void SetCursorLevels()
+        {
+            var sceneTypes = typeof(SceneType).GetEnumValues();
+            foreach (SceneType type in sceneTypes)
+            {
+                cursorLevels.Add(type, 1);
+            }
         }
 
         public SceneType? Handle(SceneType sceneType, ConsoleKey? key)
@@ -34,7 +42,7 @@ namespace Logic
 
         public SceneType? GraficRedactor(ConsoleKey? key)
         {
-            FirstSceneDisplay();
+            FirstSceneDisplay(SceneType.GraficRedactor);
             Redactor redactor = new Redactor();
             redactor.Start();
             isSceneDisplayed = false;
@@ -43,61 +51,113 @@ namespace Logic
 
         public SceneType? StartMenu(ConsoleKey? key)
         {
-            FirstSceneDisplay();
-            var scene = scenes.Where(g => g.Type == SceneType.StartMenu).First();
-            DisplayButtons(SceneType.StartMenu, ButtonTag.Unselected);
-            return StartMenuKeyListened(key);
-
+            bool wasDisplayed = isSceneDisplayed;
+            SceneDefault(SceneType.StartMenu, key);
+            if (wasDisplayed)
+            {
+                return StartMenuKeyListened(key);
+            }
+            else
+            {
+                return SceneType.StartMenu;
+            }
         }
 
-        private void FirstSceneDisplay()
+        public SceneType? Settings(ConsoleKey key)
+        {
+            SceneDefault(SceneType.Settings, key);
+            return SettingsKeyListened(key);
+        }
+
+        private void SceneDefault(SceneType type, ConsoleKey? key)
+        {
+            var scene = scenes.Where(g => g.Type == type).First();
+            FirstSceneDisplay(scene.Type);
+        }
+
+        private void FirstSceneDisplay(SceneType type)
         {
             if (!isSceneDisplayed)
             {
-                cursorLevel = 0;
                 _interface.Clear();
+                isSceneDisplayed = true;
+                DisplayElements(type, ElementType.Button, ElementTag.Unselected);
+
+                    DisplayElement(type, "Button" + cursorLevels[type] + "Selected");
+
             }
-            isSceneDisplayed = true;
+        }
+
+        private SceneType? SettingsKeyListened(ConsoleKey? key)
+        {
+            var scene = GetScene(SceneType.Settings);
+            if (scene != null)
+            {
+                ChangeCursorLevel(scene.Type, 1, 2, key);
+                DisplaySliderFields(SceneType.Settings);
+                if (key == ConsoleKey.Enter)
+                {
+                    ChangingSliderPos(IntToSettingsProperty(cursorLevels[SceneType.Settings]));
+                }
+                if (key == ConsoleKey.Escape)
+                {
+                    isSceneDisplayed = false;
+                    return Handle(SceneType.StartMenu, null);
+                }
+            }       
+            return SceneType.Settings;
         }
 
         private SceneType? StartMenuKeyListened(ConsoleKey? key)
         {
             var scene = GetScene(SceneType.StartMenu);
+            if(scene != null)
+            {
+                ChangeCursorLevel(scene.Type, 1, 3, key);
+                if (key == ConsoleKey.Enter)
+                {
+                    isSceneDisplayed = false;
+                    return Handle((SceneType)cursorLevels[scene.Type], null);
+                }
+                if (key == ConsoleKey.Escape)
+                {
+                     Process.GetCurrentProcess().Kill();
+                }
+            }
+            return SceneType.StartMenu;
+        }
+
+        private void ChangeCursorLevel(SceneType sceneType, int min, int max, ConsoleKey? key)
+        {
             switch (key)
             {
                 case ConsoleKey.DownArrow:
-                    if (cursorLevel < 3)
+                    if (cursorLevels[sceneType] < max)
                     {
-                        ChangeAndDisplayButton(SceneType.StartMenu, 1);
+                        ChangeAndDisplayButton(sceneType, 1);
                     }
-                    return scene.Type;
+                    break;
                 case ConsoleKey.UpArrow:
-                    if (cursorLevel > 0)
+                    if (cursorLevels[sceneType] > min)
                     {
-                        ChangeAndDisplayButton(SceneType.StartMenu, -1);
+                        ChangeAndDisplayButton(sceneType, -1);
                     }
-                    return scene.Type;
-                case ConsoleKey.Enter:
-                    isSceneDisplayed = false;
-                    return Handle((SceneType)cursorLevel, null);
-                default:
-                    ChangeAndDisplayButton(SceneType.StartMenu, 0);
-                    return SceneType.StartMenu;
+                    break;
             }
         }
 
         private void ChangeAndDisplayButton(SceneType type, int change)
         {
-            DisplayButtons(type, ButtonTag.Unselected);
-            cursorLevel += change;
-            DisplayButtons(type, ButtonTag.Selected);
+            DisplayButtons(type, ElementTag.Unselected);
+            cursorLevels[type] += change;
+            DisplayButtons(type, ElementTag.Selected);
         }
 
-        private void DisplayButtons(SceneType type, ButtonTag tag)
+        private void DisplayButtons(SceneType type, ElementTag tag)
         {
             var scene = scenes.Where(g => g.Type == type).First();
             SceneElement button;
-            if (cursorLevel == 0)
+            if (cursorLevels[type] == 0)
             {
                 var sceneElements = scene.Elements.Where(g => g.GraficName.Contains("Unselected"));
                 foreach (var sceneElement in sceneElements)
@@ -107,31 +167,45 @@ namespace Logic
             }
             else
             {
-                button = scene.Elements.Where(g => g.GraficName.Contains("Button" + cursorLevel + tag.ToString())).First();
-                PrintElement(type, button.GraficName);
+                button = scene.Elements.Where(g => g.GraficName.Contains("Button" + cursorLevels[type] + tag.ToString())).First();
+                DisplayElement(type, button.GraficName);
             }
         }
         
-        private void PrintElement(SceneType type, string elementName)
+        private void DisplayElement(SceneType type, string elementName)
         {
-            var scene = scenes.Where(g => g.Type == type).First();
-            var element = scene.Elements.Where(g => g.GraficName == elementName).First();
-            _interface.PrintGrafic(elementName, adaptSceneOffset(scene, element));
+            var scene = GetScene(type);
+            if (scene != null)
+            {
+                var element = scene.Elements.Where(g => g.GraficName.Contains(elementName)).FirstOrDefault();
+                if (element != null)
+                {
+                    _interface.PrintGrafic(element.GraficName, adaptSceneOffset(scene, element));
+                }
+            }
         }
 
-        //private void PrintElementByTag(SceneType type, string tag)
-        //{
-        //    var scene = scenes.Where(g => g.Type == SceneType.StartMenu).First();
-        //}
+        private void DisplayElements(SceneType sceneType, ElementType elementType, ElementTag tag)
+        {
+            var scene = GetScene(sceneType);
+            if (scene != null)
+            {
+                var elements = scene.Elements.Where(g => g.GraficName.Contains(elementType.ToString()) && g.GraficName.Contains(tag.ToString()));
+                foreach (var element in elements)
+                {
+                    DisplayElement(sceneType, element.GraficName);
+                }
+            }
+        }
 
         private Cell adaptSceneOffset(Scene scene, SceneElement element)
         {
             return new Cell(scene.Offset.X + element.Offset.X, scene.Offset.Y + element.Offset.Y);
         }
 
-        internal Scene GetScene(SceneType type)
+        internal Scene? GetScene(SceneType type)
         {
-            var scene = scenes.Where(g => g.Type == type).First();
+            var scene = scenes.Where(g => g.Type == type).FirstOrDefault();
             return scene;
         }
 
@@ -142,7 +216,7 @@ namespace Logic
             List<Scene> list = new List<Scene>();
             foreach (var file in files)
             {
-                var scene = Deserialize(file.FullName);
+                var scene = SceneDeserialize(file.FullName);
                 if (scene != null)
                 {
                     list.Add(scene);
@@ -151,7 +225,7 @@ namespace Logic
             return list.ToArray();
         }
 
-        private Scene? Deserialize(string path)
+        private Scene? SceneDeserialize(string path)
         {
             var jsonformatter = new DataContractJsonSerializer(typeof(Scene));
 
@@ -172,49 +246,11 @@ namespace Logic
 
         public SceneType? Game(ConsoleKey? key)
         {
-            FirstSceneDisplay();
+            FirstSceneDisplay(SceneType.Game);
             GameHandler gameHandler = new GameHandler(_interface);
             gameHandler.Start();
             isSceneDisplayed = false;
             return Handle(SceneType.StartMenu, null);
-        }
-
-        public SceneType? Settings(ConsoleKey key)
-        {
-            FirstSceneDisplay();
-            var scene = scenes.Where(g => g.Type == SceneType.Settings).First();
-            DisplayButtons(SceneType.Settings, ButtonTag.Unselected);
-            return SettingsKeyListened(key);
-        }
-
-        private SceneType? SettingsKeyListened(ConsoleKey? key)
-        {
-            var scene = GetScene(SceneType.Settings);
-            switch (key)
-            {
-                case ConsoleKey.DownArrow:
-                    if (cursorLevel < 2)
-                    {
-                        ChangeAndDisplayButton(SceneType.Settings, 1);
-                    }
-                    return scene.Type;
-                case ConsoleKey.UpArrow:
-                    if (cursorLevel > 0)
-                    {
-                        ChangeAndDisplayButton(SceneType.Settings, -1);
-                    }
-                    return scene.Type;
-                case ConsoleKey.Enter:
-                    ChangingSliderPos(IntToSettingsProperty(cursorLevel));
-                    return scene.Type;
-                case ConsoleKey.Escape:
-                    isSceneDisplayed = false;
-                    return Handle(SceneType.StartMenu, null);
-                default:
-                    ChangeAndDisplayButton(SceneType.Settings, 0);
-                    DisplaySliderFields(SceneType.Settings);
-                    return SceneType.Settings;
-            }
         }
 
         private string IntToSettingsProperty(int i)
@@ -232,7 +268,7 @@ namespace Logic
 
         private void ChangingSliderPos(string propName)
         {
-            DisplaySliderField(SceneType.Settings, propName, true);
+            DisplaySliderField(SceneType.Settings, propName, ElementTag.Selected);
             ConsoleKey key = Console.ReadKey(true).Key;
             if (key != ConsoleKey.Enter && key != ConsoleKey.Escape)
             {
@@ -241,42 +277,47 @@ namespace Logic
             }
             else
             {
-                DisplaySliderField(SceneType.Settings, propName);
+                DisplaySliderField(SceneType.Settings, propName, ElementTag.Unselected);
             }
         }
 
         private void ChangeSliderPos(ConsoleKey key, SceneType type, string propertyName)
         {
             var scene = GetScene(type);
-            var slider = scene.Elements.Where(g => g.GraficName.Contains(propertyName + "Slider")).First();
-            var settings = new Settings();
-            var propValue = settings.GetType().GetProperty(propertyName)?.GetValue(settings);
-            if(propValue != null)
+            if (scene != null)
             {
-                Cell sliderDefaultPos = new Cell(adaptSceneOffset(scene, slider));
-                sliderDefaultPos.X++;
-                sliderDefaultPos.Y++;
-                _interface.PrintGrafic("ClearedSlider", sliderDefaultPos);
-                int value = ChangeValueByArrows((int)propValue, 1, 3, key);
-                DisplaySlider(sliderDefaultPos, value, true);
-                settings.GetType().GetProperty(propertyName)?.SetValue(settings, value);
-                settings.Record();
+                var slider = scene.Elements.Where(g => g.GraficName.Contains(propertyName + "Slider")).First();
+                var settings = new Settings();
+                var propValue = settings.GetType().GetProperty(propertyName)?.GetValue(settings);
+                if (propValue != null)
+                {
+                    int value = ChangeValueByArrows((int)propValue, 1, 3, key);
+                    DisplaySlider(adaptSceneOffset(scene, slider), value, ElementTag.Selected);
+
+                    settings.GetType().GetProperty(propertyName)?.SetValue(settings, value);
+                    settings.Record();
+                }
             }
         }
 
-        private void DisplaySliderField(SceneType type, string propertyName, bool selected = false)
+        private void ClearSlider(Cell cell)
+        {
+            _interface.PrintGrafic("ClearedSlider", cell);
+        }
+
+        private void DisplaySliderField(SceneType type, string propertyName, ElementTag tag)
         {
             var scene = GetScene(type);
-            var slider = scene.Elements.Where(g => g.GraficName.Contains(propertyName + "Slider")).First();
-            var settings = new Settings();
-            var propValue = settings.GetType().GetProperty(propertyName)?.GetValue(settings);
-            _interface.PrintGrafic(slider.GraficName, adaptSceneOffset(scene, slider));
-            Cell sliderDefaultPos = new Cell(adaptSceneOffset(scene, slider));
-            sliderDefaultPos.X++;
-            sliderDefaultPos.Y++;
-            if (propValue != null)
+            if (scene != null)
             {
-                DisplaySlider(sliderDefaultPos, (int)propValue, selected);
+                var slider = scene.Elements.Where(g => g.GraficName.Contains(propertyName + "Slider")).First();
+                var settings = new Settings();
+                var propValue = settings.GetType().GetProperty(propertyName)?.GetValue(settings);
+                _interface.PrintGrafic(slider.GraficName, adaptSceneOffset(scene, slider));
+                if (propValue != null)
+                {
+                    DisplaySlider(adaptSceneOffset(scene, slider), (int)propValue, tag);
+                }
             }
         }
 
@@ -298,17 +339,16 @@ namespace Logic
             var propNames = typeof(Settings).GetProperties();
             foreach (var prop in propNames)
             {
-                DisplaySliderField(type, prop.Name);
+                DisplaySliderField(type, prop.Name, ElementTag.Unselected);
             }
         }
 
-        private void DisplaySlider(Cell defaultPos, int propValue, bool selected)
+        private void DisplaySlider(Cell fieldDefaultPos, int propValue, ElementTag tag)
         {
-            string name = selected
-                ? "SliderSelected"
-                : "SliderUnselected";
-            defaultPos.X += --propValue * 3;
-            _interface.PrintGrafic(name, defaultPos);
+            fieldDefaultPos++;
+            ClearSlider(fieldDefaultPos);
+            fieldDefaultPos.X += --propValue * 3;
+            _interface.PrintGrafic("Slider" + tag.ToString(), fieldDefaultPos);
         }
     }
 }

@@ -10,17 +10,20 @@
 
         public int Y { get; set; }
 
+        public int Difficulty { get; set; }
+
         public LogicCell GetPlayer()
         {
             return new LogicCell(playerCell);
         }
 
-        public Field(int x, int y) 
+        public Field(int size, int difficulty) 
         {
-            X = x;
-            Y = y;
-            LogicCells = new LogicCell[y, x];
-            playerCell = new LogicCell((X - 1) / 2, y - 1, CellType.Player);
+            X = 17 + size * 4;
+            Y = 13 + size * 2;
+            Difficulty = difficulty;
+            LogicCells = new LogicCell[Y, X];
+            playerCell = new LogicCell((X - 1) / 2, Y - 1, CellType.Player);
             GenerateField();
         }
 
@@ -77,8 +80,9 @@
 
         private void AddMines()
         {
-            Random rnd = new Random();
-            int minesAmount = (X - 2) * (Y - 2) / 4;
+
+            Random rnd = new Random();            
+            int minesAmount = (X - 2) * (Y - 2) / (5 - Difficulty);
             for (int i = 0; i < minesAmount; i++)
             {
                 LogicCell cell;
@@ -174,7 +178,7 @@
             {
                 for (int i = player.X - 1; i < player.X + 2; i++)
                 {
-                    if (i < this.X && j < this.Y)
+                    if (i < this.X && j < this.Y && i > 0 && j > 0)
                     {
                         if (LogicCells[j, i].Type == CellType.Mine)
                         {

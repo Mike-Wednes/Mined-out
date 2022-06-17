@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public enum ButtonTag
+    public enum ElementTag
     {
         Selected,
         Unselected,

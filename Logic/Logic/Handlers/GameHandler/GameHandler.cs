@@ -18,7 +18,8 @@ namespace Logic
 
         public void Start()
         {
-            field = new Field(_interface.GetFieldSize("x"), _interface.GetFieldSize("y"));
+            Settings settings = new Settings();
+            field = new Field(settings.FieldSize, settings.DifficultyLevel);
             _interface.Clear();
             DisplayField();
             while (ListenKeys()) { }
@@ -43,6 +44,9 @@ namespace Logic
 
         public void DisplayField()
         {
+            Settings settings = new Settings();
+            fieldOffset.Y += 2 - settings.FieldSize * 2;
+            fieldOffset.X += 1 - settings.FieldSize * 1;
             LogicCell[,] cells = field.GetCells();
             foreach (LogicCell cell in cells)
             {
@@ -102,6 +106,7 @@ namespace Logic
                     EndByExplosion();
                     return true;
                 case CellType.Finish:
+                    EndByFinish();
                     return true;
                 default:
                     return false;
@@ -118,6 +123,15 @@ namespace Logic
             Thread.Sleep(2000);
             _interface.Clear();
             _interface.PrintGrafic("GameOver", new Cell(23, 5));
+            Thread.Sleep(1000);
+        }
+
+        private void EndByFinish()
+        {
+            ChangeViewMode(CellType.Mine, CellView.Visible);
+            Thread.Sleep(2000);
+            _interface.Clear();
+            _interface.PrintGrafic("Finish", new Cell(23, 5));
             Thread.Sleep(1000);
         }
 
