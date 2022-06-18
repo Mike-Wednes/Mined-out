@@ -4,7 +4,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Core\Core.csproj" />

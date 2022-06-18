@@ -1,0 +1,51 @@
+{
+  "Elements": [
+    {
+      "GraficName": "FieldSizeButton1Selected",
+      "Offset": {
+        "X": 0,
+        "Y": 0
+      }
+    },
+    {
+      "GraficName": "FieldSizeButton1Unselected",
+      "Offset": {
+        "X": 0,
+        "Y": 0
+      }
+    },
+    {
+      "GraficName": "DifficultyButton2Unselected",
+      "Offset": {
+        "X": 0,
+        "Y": 5
+      }
+    },
+    {
+      "GraficName": "DifficultyButton2Selected",
+      "Offset": {
+        "X": 0,
+        "Y": 5
+      }
+    },
+    {
+      "GraficName": "FieldSizeSliderField1",
+      "Offset": {
+        "X": 20,
+        "Y": 0
+      }
+    },
+    {
+      "GraficName": "DifficultyLevelSliderField2",
+      "Offset": {
+        "X": 20,
+        "Y": 5
+      }
+    }
+  ],
+  "Offset": {
+    "X": 15,
+    "Y": 2
+  },
+  "Type": 2
+}

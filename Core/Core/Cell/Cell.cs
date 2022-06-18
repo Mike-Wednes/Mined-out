@@ -36,6 +36,16 @@ namespace Core
             return X == cell.X && Y == cell.Y;
         }
 
+        public static Cell operator ++(Cell cell)
+        {
+            return new Cell(cell.X + 1, cell.Y + 1);
+        }
+
+        public static Cell operator --(Cell cell)
+        {
+            return new Cell(cell.X - 1, cell.Y - 1);
+        }
+
         public override string ToString()
         {
             return $"X:{X};Y:{Y}";

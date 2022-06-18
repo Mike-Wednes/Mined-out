@@ -18,15 +18,14 @@ namespace GraficRedactor
 
         public Cell LastPosition { get; set; }
 
-        public Palette(Cell offsetInput)
+        public Palette(Cell offsetInput, List<GraficCell> table)
         {
             Rows = 4;
             Cols = 4;
             IsDisplayed = false;
             LastPosition = new Cell(offsetInput);
             OffSet = new Cell(offsetInput);
-            string path = @"../../../../../GraficRedactor/Palette/paletteTable.json";
-            paletteList = Redactor.GetCollection(path);
+            paletteList = table;
             paletteTable = new GraficCell[Rows, Cols];
             PlaceListInArray();
         }

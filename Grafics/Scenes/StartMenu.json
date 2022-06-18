@@ -1,0 +1,51 @@
+{  
+  "Elements": [
+    {
+      "GraficName": "PlayButton1Selected",
+      "Offset": {
+        "X": 0,
+        "Y": 0
+      }
+    },
+    {
+      "GraficName": "PlayButton1Unselected",
+      "Offset": {
+        "X": 0,
+        "Y": 0
+      }
+    },
+    {
+      "GraficName": "SettingsButton2Unselected",
+      "Offset": {
+        "X": 0,
+        "Y": 7
+      }
+    },
+    {
+      "GraficName": "SettingsButton2Selected",
+      "Offset": {
+        "X": 0,
+        "Y": 7
+      }
+    },
+    {
+      "GraficName": "RedactorButton3Selected",
+      "Offset": {
+        "X": 0,
+        "Y": 14
+      }
+    },
+    {
+      "GraficName": "RedactorButton3Unselected",
+      "Offset": {
+        "X": 0,
+        "Y": 14
+      }
+    }
+  ],
+  "Offset": {
+    "X": 40,
+    "Y": 3
+  },
+  "Type": 0
+}

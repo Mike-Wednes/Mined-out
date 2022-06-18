@@ -1,22 +1,12 @@
 ﻿using Core;
 using System;
 using System.Threading;
+using System.Runtime.Serialization.Json;
 
 namespace UI
 {
     public class UserInterface : IInterface
     {
-        private readonly Cell fieldOffset = new Cell { X = 40, Y = 6 };
-
-        public void DisplayField(Field field)
-        {
-            LogicCell[,] cells = field.GetCells();
-            foreach(LogicCell cell in cells)
-            {
-                DisplayCell(cell, field, fieldOffset);
-            }
-        }
-
         private char IdentifyCell(LogicCell cell, Field field)
         {   
             if (cell.View == CellView.Invisible)
@@ -84,16 +74,11 @@ namespace UI
             }
         }
 
-        public void DisplayCell(LogicCell cell, Field field)
+        public void DisplayCell(LogicCell cell, Field field, Cell fieldOffset)
         {
-            DisplayCell(cell, field, fieldOffset);
-        }
-
-        public void DisplayCell(LogicCell cell, Field field, Cell offset)
-        {
-            Console.SetCursorPosition(cell.X + offset.X, cell.Y + offset.Y);
+            Console.SetCursorPosition(cell.X + fieldOffset.X, cell.Y + fieldOffset.Y);
             WriteColored(IdentifyCell(cell, field).ToString(), IdentifyCellBackGround(cell, field), IdentifyCellForeGround(cell, field));
-            Console.SetCursorPosition(0, field.Y + fieldOffset.Y);
+            Console.SetCursorPosition(0, 20);
         }
 
         private void WriteColored(string str, ConsoleColor backGround, ConsoleColor foreGround, bool doLine = false)
@@ -117,16 +102,10 @@ namespace UI
             Console.ForegroundColor = currentForeground;
         }
 
-        public void Move(List<LogicCell> vector, Field field)
+        public void Move(List<LogicCell> vector, Field field, Cell fieldOffset)
         {
             DisplayCell(vector[0], field, fieldOffset);
             DisplayCell(vector[1], field, fieldOffset);
-        }
-
-        public void DisplayKeys()
-        {
-            Console.WriteLine("Use arrows to move");
-            Console.WriteLine("Use WASD to mark mines");
         }
 
         public int GetFieldSize(string linearSize)
@@ -166,27 +145,61 @@ namespace UI
             return size % 2 == 1;
         }
 
-        public void GameOver()
+
+        public void DisplayCellsByType(CellType type, Field field, Cell fieldOffset)
         {
-            PrintGrafic(GraficCollection.GameOver, new Cell(50, 10));
+            foreach(LogicCell cell in field.GetCells())
+            {
+                if (cell.Type == type)
+                {
+                    DisplayCell(cell, field, fieldOffset);
+                }
+            }
         }
 
-        private void PrintGrafic(List<GraficCell> grafic, Cell offset)
+        public void PrintGrafic(string name, Cell offset)
         {
-            Console.Clear();
+            var grafic = GetCollection(name);
             foreach(GraficCell cell in grafic)
             {
                 Console.SetCursorPosition(cell.X + offset.X, cell.Y + offset.Y);
                 WriteColored(cell.Text.ToString(), cell.Color, cell.TextColor);
-                Console.SetCursorPosition(0, 20 + fieldOffset.Y);
+                Console.SetCursorPosition(0, 20);
                 Thread.Sleep(cell.Delay);
             }
         }
 
-        public void Success()
+        public void Clear()
         {
-            Console.WriteLine();
-            Console.WriteLine("\t\t\t\t\t\tSUCCESS");
+            Console.Clear();
+        }
+
+        private List<GraficCell> GetCollection(string name)
+        {
+            name = @"../../../../../Grafics/" + name + ".json";
+            var jsonformatter = new DataContractJsonSerializer(typeof(List<GraficCell>));
+
+            try
+            {
+                using (var file = new FileStream(name, FileMode.Open))
+                {
+                    var collection = jsonformatter.ReadObject(file) as List<GraficCell>;
+                    if (collection != null)
+                    {
+                        return collection;
+                    }
+                    else
+                    {
+                        Console.WriteLine("ERROR Deserialized as null");
+                        return new List<GraficCell>();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new List<GraficCell>();
+            }
         }
     }
 }

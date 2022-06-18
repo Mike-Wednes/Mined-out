@@ -2,11 +2,12 @@
 {
     internal enum RedactMode
     {
-        General,
+        GeneralMode,
         ColorMode,
         TextMode,
         TextColorMode,
         DelayMode,
         ClosingMode,
+        HotKeysMode,
     }
 }
