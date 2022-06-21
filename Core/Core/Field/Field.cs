@@ -139,21 +139,21 @@
             switch (dir)
             {
                 case Direction.Right:
-                    return new Cell { X = 1, Y = 0 };
+                    return new Cell(1, 0);
                 case Direction.Left:
-                    return new Cell { X = -1, Y = 0 };
+                    return new Cell(-1, 0);
                 case Direction.Up:
-                    return new Cell { X = 0, Y = -1 };
+                    return new Cell(0, -1);
                 default:
-                    return new Cell { X = 0, Y = 1 };
+                    return new Cell(0, 1);
             }
         }
 
         private LogicCell ChangedPosition(LogicCell cell, Cell offset)
         {
-            if (CheckForMove(new LogicCell { X = cell.X + offset.X, Y = cell.Y + offset.Y }))
+            if (CheckForMove(new LogicCell (cell.X + offset.X, cell.Y + offset.Y )))
             {
-                return new LogicCell { X = cell.X + offset.X, Y = cell.Y + offset.Y };
+                return new LogicCell(cell.X + offset.X, cell.Y + offset.Y);
             }
             return cell;
         }

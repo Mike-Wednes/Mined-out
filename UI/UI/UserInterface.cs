@@ -108,38 +108,6 @@ namespace UI
             DisplayCell(vector[1], field, fieldOffset);
         }
 
-        public int GetFieldSize(string linearSize)
-        {
-            if (linearSize.ToLower() == "x")
-            {
-                Console.Write("Enter a field's length: ");
-            }
-            else
-            {
-                Console.Write("Enter a field's hight: ");
-            }
-            int.TryParse(Console.ReadLine(), out int size);
-            if (IsOdd(size) && size >= 7 && size <= 27)
-            {
-                return size;
-            }
-            else if (size < 7)
-            {
-                Console.WriteLine("Enter a number bigger than 6");
-                return GetFieldSize(linearSize);
-            }
-            else if (size > 27)
-            {
-                Console.WriteLine("Enter a number smaller than 27");
-                return GetFieldSize(linearSize);
-            }
-            else
-            {
-                Console.WriteLine("Enter an odd numbers");
-                return GetFieldSize(linearSize);
-            }
-        }
-
         private bool IsOdd(int size)
         {
             return size % 2 == 1;
