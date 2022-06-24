@@ -17,7 +17,7 @@
             return new LogicCell(playerCell);
         }
 
-        public Field(int size, int difficulty) 
+        public Field(int size, int difficulty)
         {
             X = 17 + size * 4;
             Y = 13 + size * 2;
@@ -63,7 +63,7 @@
                 else
                 {
                     LogicCells[y, i] = new LogicCell(i, y, CellType.Border);
-                }                
+                }
             }
         }
 
@@ -81,7 +81,7 @@
         private void AddMines()
         {
 
-            Random rnd = new Random();            
+            Random rnd = new Random();
             int minesAmount = (X - 2) * (Y - 2) / (5 - Difficulty);
             for (int i = 0; i < minesAmount; i++)
             {
@@ -103,7 +103,7 @@
 
         public List<LogicCell> MovePlayer(Direction dir, out LogicCell stepped)
         {
-            return ChangePlayerPosition(GetCellOffset(dir), out stepped); 
+            return ChangePlayerPosition(GetCellOffset(dir), out stepped);
         }
 
         private List<LogicCell> ChangePlayerPosition(Cell offset, out LogicCell stepped)
@@ -151,7 +151,7 @@
 
         private LogicCell ChangedPosition(LogicCell cell, Cell offset)
         {
-            if (CheckForMove(new LogicCell (cell.X + offset.X, cell.Y + offset.Y )))
+            if (CheckForMove(new LogicCell(cell.X + offset.X, cell.Y + offset.Y)))
             {
                 return new LogicCell(cell.X + offset.X, cell.Y + offset.Y);
             }
@@ -184,7 +184,7 @@
                         {
                             count++;
                         }
-                    }                    
+                    }
                 }
             }
             return count;
@@ -194,7 +194,7 @@
         {
             rnd = rnd == null
                 ? new Random()
-                :rnd;
+                : rnd;
 
             deadDirections = deadDirections == null
                 ? new List<Direction>()
@@ -209,44 +209,41 @@
                 stepHistory.Add(playerCell);
                 GenerateWay(rnd, stepHistory, deadDirections);
             }
-            else if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (X - 3) / 2 && stepHistory.Last().X <= (X + 1) / 2))
+            if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (X - 3) / 2 && stepHistory.Last().X <= (X + 1) / 2))
             {
+                return;
+            }
+
+            Direction dir = new Direction();
+            if (deadDirections.Count == 4)
+            {
+                ClearWay();
+                GenerateWay(rnd);
+            }
+
+            do
+            {
+                dir = (Direction)rnd.Next(0, 4);
+            }
+            while (deadDirections.Contains(dir));
+
+            LogicCell newPosition = ChangedPosition(stepHistory.Last(), GetCellOffset(dir));
+
+            if (WayCellCount(newPosition) > 1 || (stepHistory.Last().Equals(newPosition)) || IsDirectedFromExit(stepHistory, newPosition))
+            {
+                deadDirections.Add(dir);
             }
             else
             {
-                Direction dir = new Direction();
-                if (deadDirections.Count == 4)
-                {
-                    deadDirections.Clear();
-                    stepHistory.Clear();
-                    ClearWay();
-                    GenerateWay(rnd);
-                }
-                else
-                {
-                    do
-                    {
-                        dir = (Direction)rnd.Next(0, 4);
-                    }
-                    while (deadDirections.Contains(dir));
-
-                    LogicCell newPosition = ChangedPosition(stepHistory.Last(), GetCellOffset(dir));
-
-                    if (WayCellCount(newPosition) <= 1 && !(stepHistory.Last().Equals(newPosition)) && !IsDirectedFromExit(stepHistory, newPosition))
-                    {
-                        deadDirections.Clear();
-                        stepHistory.Add(newPosition);
-                        LogicCells[newPosition.Y, newPosition.X].Type = CellType.OriginalWay;
-                        LogicCells[newPosition.Y, newPosition.X].View = CellView.Invisible;
-                    }
-                    else
-                    {
-                        deadDirections.Add(dir);
-                    }
-                    GenerateWay(rnd, stepHistory, deadDirections);
-
-                }
+                deadDirections.Clear();
+                stepHistory.Add(newPosition);
+                LogicCells[newPosition.Y, newPosition.X].Type = CellType.OriginalWay;
+                LogicCells[newPosition.Y, newPosition.X].View = CellView.Invisible;
             }
+            GenerateWay(rnd, stepHistory, deadDirections);
+
+            
+            
         }
 
         private void ClearWay()

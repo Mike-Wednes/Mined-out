@@ -18,28 +18,19 @@ namespace Core
         public char Text { get; set; }
 
         public GraficCell() 
-        {
-            Text = ' ';
-            X = -1;
-            Y = -1;
-        }
+            :this(-1, -1, default)
+        {}
 
         public GraficCell(int x, int y, ConsoleColor color)
-            :this(x, y, color, ' ', ConsoleColor.Gray)
-        {
-        }
+            :this(x, y, color, ' ', default)
+        {}
 
         public GraficCell(int x, int y, ConsoleColor color, char text, ConsoleColor textColor)
-        {
-            X = x;
-            Y = y;
-            Color = color;
-            Text = text;
-            TextColor = textColor;
-        }
+            :this(x, y, color, 0, text, textColor)
+        {}
 
         public GraficCell(int x, int y, ConsoleColor color, int delay)
-            :this(x, y, color, delay, ' ', ConsoleColor.Gray)
+            :this(x, y, color, delay, ' ', default)
         {}
 
         public GraficCell(GraficCell cell)
