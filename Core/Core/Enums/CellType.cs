@@ -6,7 +6,5 @@
         Space,
         Player,
         Mine,
-        OriginalWay,
-        Finish,
     }
 }

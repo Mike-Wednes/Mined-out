@@ -8,7 +8,7 @@ namespace UI
 
         public void DisplayCell(LogicCell cell, Field field, Cell fieldOffset);
 
-        public void DisplayCellsByType(CellType type, Field field, Cell fieldOffset);
+        public void DisplayCellsByType(Type type, Field field, Cell fieldOffset);
 
         public void PrintGrafic(string name, Cell offset);
 

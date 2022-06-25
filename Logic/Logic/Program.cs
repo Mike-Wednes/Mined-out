@@ -16,7 +16,7 @@ namespace Logic
 
         public static IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IInterface, UserInterface>();
+            services.AddTransient<IInterface, ConsoleInterface>();
             services.AddTransient<Application>();
             return services;
         }

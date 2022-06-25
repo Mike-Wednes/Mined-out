@@ -30,9 +30,9 @@ namespace Logic
             ConsoleKeyInfo key = Console.ReadKey(true);
             if (typeof(Core.KeysGroups.MoveKeys).DoesEnumContainKey(key))
             {
-                return Move(key);
+                return MovePlayer(key);
             }
-            else if (typeof(Core.KeysGroups.MarkKeys).DoesEnumContainKey(key))
+            if (typeof(Core.KeysGroups.MarkKeys).DoesEnumContainKey(key))
             {
                 Mark(key);
             }
@@ -54,63 +54,55 @@ namespace Logic
             }
         }
 
-        private bool Move(ConsoleKeyInfo key)
+        private bool MovePlayer(ConsoleKeyInfo key)
         {
-            LogicCell stepped = new LogicCell();
-            switch (key.Key)
+            var steppedCell = field.GetChangedPosition(field.GetPlayer(), KeyArrowToOffset.Get(key.Key));
+            var afterStepMethod = GetAfterStepMethod(steppedCell);
+
+            var moveLine = field.GetMoveLine(KeyArrowToOffset.Get(key.Key));
+            foreach(var logicCell in moveLine)
             {
-                case ConsoleKey.RightArrow:
-                    _interface.Move(field.MovePlayer(Direction.Right, out stepped), field, fieldOffset);
-                    break;
-                case ConsoleKey.LeftArrow:
-                    _interface.Move(field.MovePlayer(Direction.Left, out stepped), field, fieldOffset);
-                    break;
-                case ConsoleKey.UpArrow:
-                    _interface.Move(field.MovePlayer(Direction.Up, out stepped), field, fieldOffset);
-                    break;
-                case ConsoleKey.DownArrow:
-                    _interface.Move(field.MovePlayer(Direction.Down, out stepped), field, fieldOffset);
-                    break;
+                _interface.DisplayCell(logicCell, field, fieldOffset);
             }
-            if (!CheckCellType(stepped))
+
+            return DoesContinue(afterStepMethod);
+        }
+
+        private bool DoesContinue(Action? afterStepMethod)
+        {
+            if (afterStepMethod == null)
             {
                 return true;
             }
-            return false;
+            else
+            {
+                afterStepMethod?.Invoke();
+                return false;
+            }
+        }
+
+        private Action? GetAfterStepMethod(Cell steppedCell)
+        {
+            var  steppedCellType = GetTypeByCoordinations(steppedCell);
+            if (steppedCellType == typeof(FinishSpaceCell))
+            {
+                return new Action(EndByFinish);
+            }
+            if (steppedCellType == typeof(MineCell))
+            {
+                return new Action(EndByExplosion);
+            }
+            return null;
+        }
+
+        private Type GetTypeByCoordinations(Cell cell)
+        {
+            return field.GetCells()[cell.Y, cell.X].GetType();
         }
 
         private void Mark(ConsoleKeyInfo key)
         {
-            switch (key.Key)
-            {
-                case ConsoleKey.W:
-                    _interface.DisplayCell(field.MarkCell(Direction.Up), field, fieldOffset);
-                    break;
-                case ConsoleKey.D:
-                    _interface.DisplayCell(field.MarkCell(Direction.Right), field, fieldOffset);
-                    break;
-                case ConsoleKey.A:
-                    _interface.DisplayCell(field.MarkCell(Direction.Left), field, fieldOffset);
-                    break;
-                case ConsoleKey.S:
-                    _interface.DisplayCell(field.MarkCell(Direction.Down), field, fieldOffset);
-                    break;
-            }
-        }
-
-        private bool CheckCellType(LogicCell cell)
-        {
-            switch (cell.Type)
-            {
-                case CellType.Mine:
-                    EndByExplosion();
-                    return true;
-                case CellType.Finish:
-                    EndByFinish();
-                    return true;
-                default:
-                    return false;
-            }
+            _interface.DisplayCell(field.MarkCell(KeyArrowToOffset.Get(key.Key)), field, fieldOffset);
         }
 
         private void EndByExplosion()
@@ -119,7 +111,7 @@ namespace Logic
             adaptedCoordinates.X = adaptedCoordinates.X + fieldOffset.X - 1;
             adaptedCoordinates.Y = adaptedCoordinates.Y + fieldOffset.Y - 1;
             _interface.PrintGrafic("Explosion", adaptedCoordinates);
-            ChangeViewMode(CellType.Mine, CellView.Visible);
+            ChangeViewMode(typeof(MineCell), CellView.Visible);
             Thread.Sleep(2000);
             _interface.Clear();
             _interface.PrintGrafic("GameOver", new Cell(23, 5));
@@ -128,14 +120,14 @@ namespace Logic
 
         private void EndByFinish()
         {
-            ChangeViewMode(CellType.Mine, CellView.Visible);
+            ChangeViewMode(typeof(MineCell), CellView.Visible);
             Thread.Sleep(2000);
             _interface.Clear();
             _interface.PrintGrafic("Finish", new Cell(23, 5));
             Thread.Sleep(1000);
         }
 
-        private void ChangeViewMode(CellType type, CellView view)
+        private void ChangeViewMode(Type type, CellView view)
         {
             field.ChangeViewMode(type, view);
             _interface.DisplayCellsByType(type, field, fieldOffset);

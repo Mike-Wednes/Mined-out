@@ -41,9 +41,9 @@ namespace Core
             return new Cell(cell.X + 1, cell.Y + 1);
         }
 
-        public static Cell operator --(Cell cell)
+        public static Cell operator +(Cell first, Cell second)
         {
-            return new Cell(cell.X - 1, cell.Y - 1);
+            return new Cell(first.X + second.X, first.Y + second.Y);
         }
 
         public override string ToString()
