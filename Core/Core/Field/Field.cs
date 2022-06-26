@@ -80,20 +80,24 @@
 
         private void AddMines()
         {
-
-            Random rnd = new Random();
             int minesAmount = (Weidth - 2) * (Height - 2) / (5 - Difficulty);
             for (int i = 0; i < minesAmount; i++)
             {
-                Cell cell;
-                do
-                {
-                    cell = new Cell(rnd.Next(1, Weidth - 1), rnd.Next(1, Height - 1));
-                }
-                while (logicCells[cell.Y, cell.X].DoesFitType(typeof(MineCell)) 
-                    || logicCells[cell.Y, cell.X].DoesFitType(typeof(WaySpaceCell)));
-                LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(MineCell));
+                SetProperMine();
             }
+        }
+
+        private void SetProperMine()
+        {
+            Random rnd = new Random();
+            Cell cell;
+            do
+            {
+                cell = new Cell(rnd.Next(1, Weidth - 1), rnd.Next(1, Height - 1));
+            }
+            while (logicCells[cell.Y, cell.X].DoesFitType(typeof(MineCell))
+                || logicCells[cell.Y, cell.X].DoesFitType(typeof(WaySpaceCell)));
+            LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(MineCell));
         }
 
         public LogicCell[,] GetCells()
@@ -183,24 +187,13 @@
             return count;
         }
 
-        private void GenerateWay(Random? rnd = null, List<LogicCell>? stepHistory = null, List<Direction>? deadDirections = null)
+        private void GenerateWay(List<LogicCell>? stepHistory = null)
         {
-            rnd = rnd == null
-                ? new Random()
-                : rnd;
-
-            deadDirections = deadDirections == null
-                ? new List<Direction>()
-                : deadDirections;
-
-            stepHistory = stepHistory == null
-                ? new List<LogicCell>()
-                : stepHistory;
-
-            if (stepHistory.Count == 0)
+            if (stepHistory == null)
             {
+                stepHistory = new List<LogicCell>();
                 stepHistory.Add(player);
-                GenerateWay(rnd, stepHistory, deadDirections);
+                GenerateWay(stepHistory);
                 return;
             }
             if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
@@ -208,12 +201,53 @@
                 return;
             }
 
-            if (deadDirections.Count == 4)
+            var properDirection = FindProperDirection(stepHistory);
+            if (properDirection == null)
             {
                 ClearWay();
-                GenerateWay(rnd);
+                GenerateWay();
                 return;
             }
+
+            var offset = DirectionToOffset.Get((Direction)properDirection);
+            WaySpaceCell newPosition = new WaySpaceCell(GetChangedPosition(stepHistory.Last(), offset));
+            stepHistory.Add(newPosition);
+            LogicCell.MapToType(ref logicCells[newPosition.Y, newPosition.X], typeof(WaySpaceCell));
+            GenerateWay(stepHistory);   
+        }
+
+        private Direction? FindProperDirection(List<LogicCell> stepHistory)
+        {
+            var deadDirections = new List<Direction>();
+            while(deadDirections.Count < 4)
+            {
+                var aliveDirection = GetAliveDirection(deadDirections);
+                if (IsProperDirection(aliveDirection, stepHistory))
+                {
+                    return aliveDirection;
+                }
+                deadDirections.Add(aliveDirection);
+            }
+            return null;
+        }
+
+        private bool IsProperDirection(Direction dir, List<LogicCell> stepHistory)
+        {
+            Cell newPosition = new Cell(GetChangedPosition(stepHistory.Last(), DirectionToOffset.Get(dir)));
+
+            if (WayCellCount(newPosition) > 1
+                || stepHistory.Last().Equals(newPosition)
+                || IsDirectedFromExit(stepHistory, newPosition))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private Direction GetAliveDirection(List<Direction> deadDirections)
+        {
+            Random rnd = new Random();
+            rnd.Next();
 
             Direction dir;
             do
@@ -221,25 +255,7 @@
                 dir = (Direction)rnd.Next(0, 4);
             }
             while (deadDirections.Contains(dir));
-
-            WaySpaceCell newPosition = new WaySpaceCell(GetChangedPosition(stepHistory.Last(), DirectionToOffset.Get(dir)));
-
-            if (WayCellCount(newPosition) > 1 
-                || stepHistory.Last().Equals(newPosition)
-                || IsDirectedFromExit(stepHistory, newPosition))
-            {
-                deadDirections.Add(dir);
-            }
-            else
-            {
-                deadDirections.Clear();
-                stepHistory.Add(newPosition);
-                LogicCell.MapToType(ref logicCells[newPosition.Y, newPosition.X], typeof(WaySpaceCell));
-            }
-            GenerateWay(rnd, stepHistory, deadDirections);
-
-            
-            
+            return dir;
         }
 
         private void ClearWay()
