@@ -8,73 +8,6 @@ namespace UI
 {
     public class ConsoleInterface : IInterface
     {
-        //private char IdentifyCell(LogicCell cell, Field field)
-        //{   
-        //    if (cell.View == CellView.Invisible)
-        //    {
-        //        return ' ';
-        //    }
-        //    switch (cell.Type)
-        //    {
-        //        case CellType.Border:
-        //            return ' ';
-        //        case CellType.Space:
-        //            return ' ';
-        //        case CellType.Player:
-        //            return field.MinesAroundCount(cell).ToString()[0];
-        //        case CellType.OriginalWay:
-        //            return 'O';
-        //        case CellType.Mine:
-        //            return 'x';
-        //        case CellType.Finish:
-        //            return ' ';
-        //        default:
-        //            return '?';
-        //    }
-        //}
-
-        //private ConsoleColor IdentifyCellForeGround(LogicCell cell, Field field)
-        //{
-        //    switch (cell.Type)
-        //    {
-        //        case CellType.Mine:
-        //            if (cell.IsMarked)
-        //            {
-        //                return ConsoleColor.Black;
-        //            }
-        //            return ConsoleColor.Red;
-        //        case CellType.Player:
-        //            return ConsoleColor.Black;
-        //        default:
-        //            return ConsoleColor.Gray;
-        //    }
-        //}
-
-        //private ConsoleColor IdentifyCellBackGround(LogicCell cell, Field field)
-        //{
-        //    if (cell.IsMarked == true)
-        //    {
-        //        return ConsoleColor.Red;
-        //    }
-        //    else if (cell.View == CellView.Invisible)
-        //    {
-        //        return ConsoleColor.Black;
-        //    }
-        //    if (cell.IsVisited == true)
-        //    {
-        //        return ConsoleColor.DarkGray;
-        //    }
-        //    switch (cell.Type)
-        //    {
-        //        case CellType.Border:
-        //            return ConsoleColor.DarkBlue;
-        //        case CellType.Player:
-        //            return ConsoleColor.DarkGray;
-        //        default:
-        //            return ConsoleColor.Black;
-        //    }
-        //}
-
         public void DisplayCell(LogicCell cell, Field field, Cell fieldOffset)
         {
             Console.SetCursorPosition(cell.X + fieldOffset.X, cell.Y + fieldOffset.Y);
@@ -158,7 +91,7 @@ namespace UI
 
         private List<GraficCell> GetCollection(string name)
         {
-            name = @"../../../../../Grafics/" + name + ".json";
+            name = @"Grafics/" + name + ".json";
             var jsonformatter = new DataContractJsonSerializer(typeof(List<GraficCell>));
 
             try

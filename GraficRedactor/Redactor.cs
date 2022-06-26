@@ -7,11 +7,11 @@ namespace GraficRedactor
 {
     public class Redactor
     {
-        internal static string graficRootPath = @"../../../../../Grafics/";
+        internal static string graficRootPath = @"Grafics/";
 
-        private static string LabelsInfoPath = @"../../../../../GraficRedactor/ScreenInfo/LabelsInfo.txt";
+        private static string LabelsInfoPath = @"AdditionalElements/ScreenInfo/LabelsInfo.txt";
 
-        private static string DataPlaceInfoPath = @"../../../../../GraficRedactor/ScreenInfo/DataPlaceInfo.txt";
+        private static string DataPlaceInfoPath = @"AdditionalElements/ScreenInfo/DataPlaceInfo.txt";
 
         private StringInfo[] LabelsInfo;
 
@@ -49,9 +49,9 @@ namespace GraficRedactor
             cursor = new Cell(0, 0);
             currentEditingCell = new GraficCell();
             paletteColor = new Palette(new Cell(140, 8), 
-                GetCollection(@"../../../../../GraficRedactor/Palette/paletteTable.json"));
+                GetCollection(@"AdditionalElements/Palette/paletteTable.json"));
             paletteTextColor = new Palette(new Cell(140, 8), 
-                GetCollection(@"../../../../../GraficRedactor/Palette/paletteTable.json"));
+                GetCollection(@"AdditionalElements/Palette/paletteTable.json"));
             currentCollection = new List<GraficCell>();
         }
 

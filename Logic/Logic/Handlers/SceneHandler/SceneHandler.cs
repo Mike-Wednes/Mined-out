@@ -211,7 +211,7 @@ namespace Logic
 
         private Scene[] GetAllScenes()
         {
-            DirectoryInfo dir = new DirectoryInfo(@"../../../../../Grafics/Scenes");
+            DirectoryInfo dir = new DirectoryInfo(@"Grafics/Scenes");
             var files = dir.GetFiles();
             List<Scene> list = new List<Scene>();
             foreach (var file in files)

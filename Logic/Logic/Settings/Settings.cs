@@ -32,7 +32,7 @@ namespace Logic
 
         public Settings? GetSettings()
         {
-            var name = @"../../../../../Settings/Settings.json";
+            var name = @"Settings/Settings.json";
             var jsonformatter = new DataContractJsonSerializer(typeof(Settings));
 
             try
@@ -60,7 +60,7 @@ namespace Logic
 
         public void Record()
         {
-            var name = @"../../../../../Settings/Settings.json";
+            var name = @"Settings/Settings.json";
             var jsonformatter = new DataContractJsonSerializer(typeof(Settings));
             try
             {
