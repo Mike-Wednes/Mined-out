@@ -24,7 +24,7 @@ namespace Core
             Y = y;
         }
 
-        public void EqualizeCoordinates(Cell cell)
+        public void MakeEqual(Cell cell)
         {
             this.X = cell.X;
             this.Y = cell.Y;
@@ -34,6 +34,26 @@ namespace Core
         {
             Cell cell = (Cell)obj;
             return X == cell.X && Y == cell.Y;
+        }
+
+        public static Cell operator ++(Cell cell)
+        {
+            return new Cell(cell.X + 1, cell.Y + 1);
+        }
+
+        public static Cell operator +(Cell first, Cell second)
+        {
+            return new Cell(first.X + second.X, first.Y + second.Y);
+        }
+
+        public static Cell operator +(Cell first, int value)
+        {
+            return new Cell(first.X + value, first.Y + value);
+        }
+
+        public static Cell operator *(Cell first, int value)
+        {
+            return new Cell(first.X * value, first.Y * value);
         }
 
         public override string ToString()

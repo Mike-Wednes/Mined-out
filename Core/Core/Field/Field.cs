@@ -2,272 +2,290 @@
 {
     public class Field
     {
-        private LogicCell[,] LogicCells;
+        private LogicCell[,] logicCells;
 
-        private LogicCell playerCell;
+        private PlayerCell player;
 
-        public int X { get; set; }
+        public int Weidth { get; set; }
 
-        public int Y { get; set; }
+        public int Height { get; set; }
+
+        public int Difficulty { get; set; }
 
         public LogicCell GetPlayer()
         {
-            return new LogicCell(playerCell);
+            return new PlayerCell(player);
         }
 
-        public Field(int x, int y) 
+        public Field(int size, int difficulty)
         {
-            X = x;
-            Y = y;
-            LogicCells = new LogicCell[y, x];
-            playerCell = new LogicCell((X - 1) / 2, y - 1, CellType.Player);
+            Weidth = 17 + size * 4;
+            Height = 17 + size * 4;
+            Difficulty = difficulty;
+            logicCells = new LogicCell[Height, Weidth];
+            player = new PlayerCell((Weidth - 1) / 2, Height - 1);
             GenerateField();
         }
 
         private void GenerateField()
         {
-            MakeGorizontalWall(CellType.Finish, CellView.Invisible);
+            MakeGorizontalWall(typeof(FinishSpaceCell), 0);
             MakeSideWall(0);
-            MakeSideWall(X - 1);
-            MakeGorizontalWall(CellType.Space, CellView.Invisible, Y - 1);
+            MakeSideWall(Weidth - 1);
+            MakeGorizontalWall(typeof(BasicSpaceCell), Height - 1);
             AddSpace();
             GenerateWay();
             AddMines();
-            AddPlayer();
+            SetPlayer();
         }
 
-        private void AddPlayer()
+        private void SetPlayer()
         {
-            LogicCells[playerCell.Y, playerCell.X] = new LogicCell(playerCell);
+            player.MinesAround = MinesAroundPlayer();          
         }
 
         private void MakeSideWall(int x)
         {
-            for (int j = 1; j < Y - 1; j++)
+            for (int j = 1; j < Height - 1; j++)
             {
-                LogicCells[j, x] = new LogicCell(x, j, CellType.Border);
+                logicCells[j, x] = new BorderCell(x, j);
             }
         }
 
-        private void MakeGorizontalWall(CellType spaceType, CellView view, int y = 0)
+        private void MakeGorizontalWall(Type spaceCellType, int y)
         {
-            for (int i = 0; i < X; i++)
+            for (int i = 0; i < Weidth; i++)
             {
-                if (i >= (X - 3) / 2 && i <= (X + 1) / 2)
+                if (i >= (Weidth - 3) / 2 && i <= (Weidth + 1) / 2)
                 {
-                    LogicCells[y, i] = new LogicCell(i, y, spaceType, view);
+                    logicCells[y, i] = LogicCell.CreateCell(spaceCellType, i, y);
                 }
                 else
                 {
-                    LogicCells[y, i] = new LogicCell(i, y, CellType.Border);
-                }                
+                    logicCells[y, i] = new BorderCell(i, y);
+                }
             }
         }
 
         private void AddSpace()
         {
-            for (int j = 1; j < Y - 1; j++)
+            for (int j = 1; j < Height - 1; j++)
             {
-                for (int i = 1; i < X - 1; i++)
+                for (int i = 1; i < Weidth - 1; i++)
                 {
-                    LogicCells[j, i] = new LogicCell(i, j, CellType.Space);
+                    logicCells[j, i] = new BasicSpaceCell(i, j);
                 }
             }
         }
 
         private void AddMines()
         {
-            Random rnd = new Random();
-            int minesAmount = (X - 2) * (Y - 2) / 4;
+            int minesAmount = (Weidth - 2) * (Height - 2) / (5 - Difficulty);
             for (int i = 0; i < minesAmount; i++)
             {
-                LogicCell cell;
-                do
-                {
-                    cell = new LogicCell(rnd.Next(1, X - 1), rnd.Next(1, Y - 1));
-                }
-                while (cell.Type == CellType.Mine || LogicCells[cell.Y, cell.X].Type == CellType.OriginalWay);
-                LogicCells[cell.Y, cell.X].Type = CellType.Mine;
-                LogicCells[cell.Y, cell.X].View = CellView.Invisible;
+                SetProperMine();
             }
+        }
+
+        private void SetProperMine()
+        {
+            Random rnd = new Random();
+            Cell cell;
+            do
+            {
+                cell = new Cell(rnd.Next(1, Weidth - 1), rnd.Next(1, Height - 1));
+            }
+            while (logicCells[cell.Y, cell.X].DoesFitType(typeof(MineCell))
+                || logicCells[cell.Y, cell.X].DoesFitType(typeof(WaySpaceCell)));
+            LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(MineCell));
         }
 
         public LogicCell[,] GetCells()
         {
-            return LogicCells;
+            return logicCells;
         }
 
-        public List<LogicCell> MovePlayer(Direction dir, out LogicCell stepped)
+        public LogicCell GetCell(Cell position)
         {
-            return ChangePlayerPosition(GetCellOffset(dir), out stepped); 
+            return logicCells[position.Y, position.X];
         }
 
-        private List<LogicCell> ChangePlayerPosition(Cell offset, out LogicCell stepped)
+        public List<LogicCell> GetMoveLine(Cell offset)
         {
-            List<LogicCell> vector = new List<LogicCell>();
-            var changedPos = ChangedPosition(playerCell, offset);
-            stepped = new LogicCell(LogicCells[changedPos.Y, changedPos.X]);
+            List<LogicCell> moveLine = new List<LogicCell>();
 
-            LogicCells[playerCell.Y, playerCell.X].Type = CellType.Space;
-            LogicCells[playerCell.Y, playerCell.X].IsVisited = true;
-            LogicCells[playerCell.Y, playerCell.X].View = CellView.Visible;
-            vector.Add(LogicCells[playerCell.Y, playerCell.X]);
+            CurrentPositionVisited();
+            moveLine.Add(logicCells[player.Y, player.X]);
 
-            if (stepped.Type == CellType.Mine)
-            {
-                LogicCells[stepped.Y, stepped.X].IsMarked = true;
-            }
-            else
-            {
-                LogicCells[stepped.Y, stepped.X].IsMarked = false;
-            }
-            LogicCells[stepped.Y, stepped.X].Type = CellType.Player;
-            LogicCells[stepped.Y, stepped.X].View = CellView.Visible;
-            vector.Add(LogicCells[stepped.Y, stepped.X]);
+            MovePlayer(offset);
+            moveLine.Add(player);
 
-            playerCell.EqualizeCoordinates(stepped);
-
-            return vector;
+            return moveLine;
         }
 
-        private Cell GetCellOffset(Direction dir)
+        private void MovePlayer(Cell offset)
         {
-            switch (dir)
-            {
-                case Direction.Right:
-                    return new Cell { X = 1, Y = 0 };
-                case Direction.Left:
-                    return new Cell { X = -1, Y = 0 };
-                case Direction.Up:
-                    return new Cell { X = 0, Y = -1 };
-                default:
-                    return new Cell { X = 0, Y = 1 };
-            }
+            player.MakeEqual(GetChangedPosition(player, offset));
+            logicCells[player.Y, player.X].IsMarked = false;
+            player.MinesAround = MinesAroundPlayer();
         }
 
-        private LogicCell ChangedPosition(LogicCell cell, Cell offset)
+        private void CurrentPositionVisited()
         {
-            if (CheckForMove(new LogicCell { X = cell.X + offset.X, Y = cell.Y + offset.Y }))
-            {
-                return new LogicCell { X = cell.X + offset.X, Y = cell.Y + offset.Y };
-            }
-            return cell;
+            LogicCell.MapToType(ref logicCells[player.Y, player.X], typeof(BasicSpaceCell));
+            logicCells[player.Y, player.X].IsVisited = true;
+            logicCells[player.Y, player.X].IsMarked = false;
         }
 
-        private bool CheckForMove(LogicCell cell)
+        public Cell GetChangedPosition(Cell cellPosition, Cell offset)
         {
-            if (cell.X >= this.X || cell.Y >= this.Y)
+            if (CheckForMove(new Cell(cellPosition + offset)))
             {
-                return false;
+                return new Cell(cellPosition + offset);
             }
-            if (LogicCells[cell.Y, cell.X].Type == CellType.Border)
+            return cellPosition;
+        }
+
+        private bool CheckForMove(Cell cell)
+        {
+            if(IsInField(cell) && IsPassable(cell))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsInField(Cell cell)
+        {
+            if (cell.X < this.Weidth && cell.Y < this.Height)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsPassable(Cell cell)
+        {
+            if((logicCells[cell.Y, cell.X] as BorderCell) != null)
             {
                 return false;
             }
             return true;
         }
 
-        public int MinesAroundCount(LogicCell player)
+        public int MinesAroundPlayer()
         {
             int count = 0;
             for (int j = player.Y - 1; j < player.Y + 2; j++)
             {
                 for (int i = player.X - 1; i < player.X + 2; i++)
                 {
-                    if (i < this.X && j < this.Y)
+                    if (i < this.Weidth && j < this.Height && i > 0 && j > 0)
                     {
-                        if (LogicCells[j, i].Type == CellType.Mine)
+                        if (logicCells[j, i].DoesFitType(typeof(MineCell)))
                         {
                             count++;
                         }
-                    }                    
+                    }
                 }
             }
             return count;
         }
 
-        private void GenerateWay(Random? rnd = null, List<LogicCell>? stepHistory = null, List<Direction>? deadDirections = null)
+        private void GenerateWay(List<LogicCell>? stepHistory = null)
         {
-            rnd = rnd == null
-                ? new Random()
-                :rnd;
-
-            deadDirections = deadDirections == null
-                ? new List<Direction>()
-                : deadDirections;
-
-            stepHistory = stepHistory == null
-                ? new List<LogicCell>()
-                : stepHistory;
-
-            if (stepHistory.Count == 0)
+            if (stepHistory == null)
             {
-                stepHistory.Add(playerCell);
-                GenerateWay(rnd, stepHistory, deadDirections);
+                stepHistory = new List<LogicCell>();
+                stepHistory.Add(player);
+                GenerateWay(stepHistory);
+                return;
             }
-            else if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (X - 3) / 2 && stepHistory.Last().X <= (X + 1) / 2))
+            if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
             {
+                return;
             }
-            else
+
+            var properDirection = FindProperDirection(stepHistory);
+            if (properDirection == null)
             {
-                Direction dir = new Direction();
-                if (deadDirections.Count == 4)
+                ClearWay();
+                GenerateWay();
+                return;
+            }
+
+            var offset = DirectionToOffset.Get((Direction)properDirection);
+            WaySpaceCell newPosition = new WaySpaceCell(GetChangedPosition(stepHistory.Last(), offset));
+            stepHistory.Add(newPosition);
+            LogicCell.MapToType(ref logicCells[newPosition.Y, newPosition.X], typeof(WaySpaceCell));
+            GenerateWay(stepHistory);   
+        }
+
+        private Direction? FindProperDirection(List<LogicCell> stepHistory)
+        {
+            var deadDirections = new List<Direction>();
+            while(deadDirections.Count < 4)
+            {
+                var aliveDirection = GetAliveDirection(deadDirections);
+                if (IsProperDirection(aliveDirection, stepHistory))
                 {
-                    deadDirections.Clear();
-                    stepHistory.Clear();
-                    ClearWay();
-                    GenerateWay(rnd);
+                    return aliveDirection;
                 }
-                else
-                {
-                    do
-                    {
-                        dir = (Direction)rnd.Next(0, 4);
-                    }
-                    while (deadDirections.Contains(dir));
-
-                    LogicCell newPosition = ChangedPosition(stepHistory.Last(), GetCellOffset(dir));
-
-                    if (WayCellCount(newPosition) <= 1 && !(stepHistory.Last().Equals(newPosition)) && !IsDirectedFromExit(stepHistory, newPosition))
-                    {
-                        deadDirections.Clear();
-                        stepHistory.Add(newPosition);
-                        LogicCells[newPosition.Y, newPosition.X].Type = CellType.OriginalWay;
-                        LogicCells[newPosition.Y, newPosition.X].View = CellView.Invisible;
-                    }
-                    else
-                    {
-                        deadDirections.Add(dir);
-                    }
-                    GenerateWay(rnd, stepHistory, deadDirections);
-
-                }
+                deadDirections.Add(aliveDirection);
             }
+            return null;
+        }
+
+        private bool IsProperDirection(Direction dir, List<LogicCell> stepHistory)
+        {
+            Cell newPosition = new Cell(GetChangedPosition(stepHistory.Last(), DirectionToOffset.Get(dir)));
+
+            if (WayCellCount(newPosition) > 1
+                || stepHistory.Last().Equals(newPosition)
+                || IsDirectedFromExit(stepHistory, newPosition))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private Direction GetAliveDirection(List<Direction> deadDirections)
+        {
+            Random rnd = new Random();
+            rnd.Next();
+
+            Direction dir;
+            do
+            {
+                dir = (Direction)rnd.Next(0, 4);
+            }
+            while (deadDirections.Contains(dir));
+            return dir;
         }
 
         private void ClearWay()
         {
-            foreach (LogicCell cell in LogicCells)
+            foreach (LogicCell cell in logicCells)
             {
-                if (cell.Type == CellType.OriginalWay)
+                if (cell.DoesFitType(typeof(WaySpaceCell)))
                 {
-                    cell.Type = CellType.Space;
+                    LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(BasicSpaceCell));
                 }
             }
         }
 
-        private bool IsDirectedFromExit(List<LogicCell> stepHistory, LogicCell newPosition)
+        private bool IsDirectedFromExit(List<LogicCell> stepHistory, Cell newPosition)
         {
-            if (stepHistory.Last().Y == 2 && (stepHistory.Last().X >= (X - 3) / 2 && stepHistory.Last().X <= (X + 1) / 2))
+            if (stepHistory.Last().Y == 2 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
             {
-                if (newPosition.X >= (X - 3) / 2 && newPosition.X <= (X + 1) / 2 && stepHistory.Last().Y < newPosition.Y)
+                if (newPosition.X >= (Weidth - 3) / 2 && newPosition.X <= (Weidth + 1) / 2 && stepHistory.Last().Y < newPosition.Y)
                 {
-                    if ((stepHistory.Last().X == (X - 3) / 2 || stepHistory.Last().X <= (X + 1) / 2) && stepHistory[^2].X == (X - 1) / 2)
+                    if ((stepHistory.Last().X == (Weidth - 3) / 2 || stepHistory.Last().X <= (Weidth + 1) / 2) && stepHistory[^2].X == (Weidth - 1) / 2)
                     {
                         return true;
                     }
                 }
-                if (newPosition.Y == 2 && (newPosition.X < (X - 3) / 2 || newPosition.X > (X + 1) / 2))
+                if (newPosition.Y == 2 && (newPosition.X < (Weidth - 3) / 2 || newPosition.X > (Weidth + 1) / 2))
                 {
                     return true;
                 }
@@ -275,48 +293,56 @@
             return false;
         }
 
-        private int WayCellCount(LogicCell cell)
+        private int WayCellCount(Cell cell)
         {            
             int count = 0;
-            if (cell.X < this.X && cell.Y < this.Y)
+
+            for (int j = cell.Y - 1; j < cell.Y + 2; j++)
             {
-                for (int j = cell.Y - 1; j < cell.Y + 2; j++)
+                if (IsInField(new Cell(cell.X, j)))
                 {
-                    if (LogicCells[cell.Y, cell.X].Type == CellType.OriginalWay)
-                    {
-                        count++;
-                    }
-                }
-                for (int i = cell.X - 1; i < cell.X + 2; i++)
-                {
-                    if (LogicCells[cell.Y, cell.X].Type == CellType.OriginalWay)
+                    if (logicCells[j, cell.X].DoesFitType(typeof(WaySpaceCell)))
                     {
                         count++;
                     }
                 }
             }
+            for (int i = cell.X - 1; i < cell.X + 2; i++)
+            {
+                if (IsInField(new Cell(i, cell.Y)))
+                {
+                    if (logicCells[cell.Y, i].DoesFitType(typeof(WaySpaceCell)))
+                    {
+                        count++;
+                    }
+                }
+            }
+
             return count;
         }
 
-        public void ChangeViewMode(CellType type, CellView view)
+        public List<LogicCell> ReturnChangedCell(Type type, CellView view)
         {
-            foreach (LogicCell cell in LogicCells)
+            var cells = new List<LogicCell>();
+            foreach (LogicCell cell in logicCells)
             {
-                if (cell.Type == type)
+                if (cell.DoesFitType(type))
                 {
                     cell.View = view;
+                    cells.Add(cell);
                 }
             }
+            return cells;
         }
 
-        public LogicCell MarkCell(Direction dir)
+        public LogicCell MarkCell(Cell offset)
         {
-            LogicCell marked = ChangedPosition(LogicCells[playerCell.Y, playerCell.X], GetCellOffset(dir));
-            if (!marked.Equals(playerCell))
+            Cell marked = GetChangedPosition(logicCells[player.Y, player.X], offset);
+            if (!marked.Equals(player))
             {
-                LogicCells[marked.Y, marked.X].IsMarked = true;
+                logicCells[marked.Y, marked.X].IsMarked = true;
             }
-            return LogicCells[marked.Y, marked.X];
+            return logicCells[marked.Y, marked.X];
         }
     }
 }
