@@ -18,11 +18,13 @@ namespace Minew_OUT.Layers
 
         private CellConverter converter;
 
+        private bool button1Clicked = false;
+
         private MainForm mainForm;
 
-        public GameHandler gameHandler;
+        private int currentLogoNumber = 0;
 
-        private Bitmap bitmap;
+        public GameHandler gameHandler;
 
         public Game(MainForm mainForm)
         {
@@ -32,14 +34,13 @@ namespace Minew_OUT.Layers
             gameHandler = new GameHandler(DisplayCell);
             converter = new CellConverter(cellScale);
             SetSizes();
-            PlaceBoxes();
-            bitmap = new Bitmap("Grafics/MineCell.bmp");
+            PlaceBoxes(); 
         }
 
         private void SetScale()
         {
             int basicScale = 30;
-            var fieldSize = new Settings().FieldSize;
+            var fieldSize = new Core.Settings().FieldSize;
             cellScale = basicScale * 21 / (17 + fieldSize * 4);
         }
 
@@ -62,12 +63,12 @@ namespace Minew_OUT.Layers
 
         private void Game_Load(object sender, EventArgs e)
         {
-            StartHeadDisplaying();
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(200);
-                gameHandler.DisplayField();
-            });
+            //StartHeadDisplaying();
+            //Task.Factory.StartNew(() =>
+            //{
+            //    Thread.Sleep(200);
+            //    gameHandler.DisplayField();
+            //});
         }
 
 
@@ -75,16 +76,12 @@ namespace Minew_OUT.Layers
         {
             var cellBitmap = converter.Convert(cell);
             FieldArea.CreateGraphics().DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
+            //FieldArea.Image = FieldArea.CreateGraphics();
         }
 
         private void FieldArea_Paint(object sender, PaintEventArgs e)
         {
 
-        }
-
-        private void StartHeadDisplaying()
-        {
-            StartAnimation(HeadPicture, "HeadLogo", 140, 0, 330, 86);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -108,12 +105,37 @@ namespace Minew_OUT.Layers
             var stepped = gameHandler.GetSteppedCell();
             if (stepped.GetType() == typeof(MineCell))
             {
-                DisplayAnimation(FieldArea, "Boom", (stepped.X - 1) * cellScale, (stepped.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
-                gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
-                Thread.Sleep(1000);
-                mainForm.ChangeLayer(new StartMenu(mainForm));
-
+                GameOver(stepped);
             }
+            if (stepped.GetType() == typeof(FinishSpaceCell))
+            {
+                Finish();
+            }
+        }
+
+        private void GameOver(Cell cell)
+        {
+            DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * cellScale, (cell.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
+            gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
+            DoWithDelay(() => { FieldArea.Refresh(); }, 1000);
+            DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);
+            DoWithDelay(() => { GameOverLabel2.Visible = true;}, 3000);
+            DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 5000);
+        }
+
+        private void Finish()
+        {
+            DoWithDelay(() => { FieldArea.Refresh(); }, 1000);
+            DoWithDelay(() => { FinishLabel.Visible = true; }, 2000);
+            DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 4000);
+        }
+
+        private void DoWithDelay(Action action, int delay)
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Tick += (Object? myObject, EventArgs myEventArgs) => { action(); timer.Stop(); };
+            timer.Interval = delay;
+            timer.Start();
         }
 
         private void TryMark(Keys keyData)
@@ -122,17 +144,6 @@ namespace Minew_OUT.Layers
             {
                 gameHandler.Mark(KeyStorage.KeyToDirection[keyData]);
             }
-        }
-
-        private void StartAnimation(PictureBox box, string name, int x, int y, int width, int height)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    DisplayAnimation(box, name, x, y, width, height);
-                }
-            });
         }
 
         private void DisplayAnimation(PictureBox box, string name, int x, int y, int width, int height)
@@ -171,6 +182,38 @@ namespace Minew_OUT.Layers
                 count++;
             }
             return bitmaps;
+        }
+
+        private void Game_Enter(object sender, EventArgs e)
+        {
+        
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (!button1Clicked)
+            {
+                timer1.Start();
+                button1.Text = "go back";
+                gameHandler.DisplayField();
+                button1Clicked = true;
+            }
+            else
+            {
+                mainForm.ChangeLayer(new StartMenu(mainForm));
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            DrawLogo();
+        }
+
+        private void DrawLogo()
+        {
+            Bitmap picture = new Bitmap(@"Grafics\Animations\HeadLogo\" + currentLogoNumber + ".bmp");
+            HeadPicture.CreateGraphics().DrawImage(picture, 140, 0, 330, 86);
+            currentLogoNumber = 1 - currentLogoNumber;
         }
     }
 }
