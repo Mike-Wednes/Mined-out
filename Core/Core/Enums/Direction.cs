@@ -8,7 +8,7 @@ namespace Core
 {
     public enum Direction
     {
-        Left = 0,
+        Left,
         Right,
         Up,
         Down
