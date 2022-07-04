@@ -24,7 +24,7 @@ namespace Minew_OUT.Layers
 
         private int currentLogoNumber = 0;
 
-        public GameHandler gameHandler;
+        private GameHandler gameHandler;
 
         public Game(MainForm mainForm)
         {

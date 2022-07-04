@@ -1,0 +1,4 @@
+Name:Color;Coordinates:X:156;Y:0;Text:;
+Name:Text;Coordinates:X:155;Y:1;Text:;
+Name:TextColor;Coordinates:X:155;Y:2;Text:;
+Name:Delay;Coordinates:X:155;Y:3;Text:Delay:;
