@@ -23,10 +23,6 @@ namespace Minew_OUT
             {
                 path += PlayerPath((PlayerCell)cell);
             }
-            else if (cell.GetType() == typeof(MineCell))
-            {
-                path += "MineCell";
-            }
             else if (cell.IsMarked)
             {
                 path += "Mark";

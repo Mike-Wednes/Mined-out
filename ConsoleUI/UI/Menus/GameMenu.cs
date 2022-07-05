@@ -51,8 +51,17 @@ namespace ConsoleUI
         protected override ModeType? KeyRespond(ConsoleKey key)
         {
             TryMove(key);
+            TryMark(key);
             return CheckCurrent();
             
+        }
+
+        private void TryMark(ConsoleKey key)
+        {
+            if (KeyStorage.KeyToDirection.ContainsKey(key))
+            {
+                gameHandler.Mark(KeyStorage.KeyToDirection[key]); ;
+            }
         }
 
         private void TryMove(ConsoleKey key)
