@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GraficRedactor
 {
-    public class Redactor
+    internal class Redactor
     {
         internal static string graficRootPath = @"Grafics/";
 
@@ -27,28 +27,36 @@ namespace GraficRedactor
 
         internal GraficCell currentEditingCell;
 
-        private RedactMode mode;
-
-        private KeyHandler keyHandler;
-
         internal Palette paletteColor;
 
         internal Palette paletteTextColor;
 
-        public Redactor()
+        internal Redactor()
         {
             LabelsInfo = GetAllStringInfos(LabelsInfoPath);
             DataPlaceInfo = GetAllStringInfos(DataPlaceInfoPath);
         }
 
-        public void Start()
+        internal void RecordPath()
         {
             Console.Clear();
-            SetDefault();
-            path = RecordAndGetPath();
+            Console.WriteLine("Enter name:");
+            string? name = Console.ReadLine();
+            if (name != "")
+            {
+                path = graficRootPath + name + ".json";
+            }
+            else
+            {
+                path = null;
+            }
+        }
+
+        internal bool CheckPath()
+        {
             if (path == null)
             {
-                return;
+                return false;
             }
             if (File.Exists(path))
             {
@@ -58,17 +66,16 @@ namespace GraficRedactor
             {
                 if (!CreatingNeed())
                 {
-                    Start();
+                    Console.Clear();
+                    RecordPath();
                 }
             }
-            RedactingProcess();
+            return true;
         }
 
-        private void SetDefault()
+        internal void SetDefault()
         {
             path = "";
-            keyHandler = new KeyHandler(this);
-            mode = RedactMode.GeneralMode;
             cursor = new Cell(0, 0);
             currentEditingCell = new GraficCell();
             paletteColor = new Palette(new Cell(140, 8),
@@ -78,12 +85,11 @@ namespace GraficRedactor
             currentCollection = new List<GraficCell>();
         }
 
-        private void RedactingProcess()
+       internal void ClearAndPrintStandart()
         {
-            Console.SetWindowSize(200, 50);
-            ClearAndPrintStandart();
-            while (ListenKeys()) { }
-            Console.SetWindowSize(100, 31);
+            Console.Clear();
+            DisplayLabelsByTag("PL");
+            DisplayCollection(currentCollection);
         }
 
         internal string GetRootPath()
@@ -173,34 +179,11 @@ namespace GraficRedactor
             }            
         }
 
-        internal void ClearAndPrintStandart()
-        {
-            Console.Clear();
-            DisplayLabelsByTag("PL");
-            DisplayCollection(currentCollection);
-        }
-
         internal void ClearEnteringArea()
         {
             for(int i = 0; i < paletteColor.Rows; i++)
             {
                 DisplayText("                          ", paletteColor.OffSet.X, paletteColor.OffSet.Y + i);
-            }
-        }
-
-        private bool ListenKeys()
-        {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            keyHandler.GetType().GetMethod(mode.ToString())?.Invoke(keyHandler, new object[] { key });
-            if(mode == RedactMode.ClosingMode)
-            {
-                key = Console.ReadKey(true);
-                keyHandler.GetType().GetMethod(mode.ToString())?.Invoke(keyHandler, new object[] { key });
-                return false;
-            }
-            else
-            {
-                return true;
             }
         }
 
@@ -216,7 +199,7 @@ namespace GraficRedactor
 
         private void EnterCellIfEditing()
         {
-            if (!currentEditingCell.Equals(new GraficCell()) && mode.Equals(RedactMode.GeneralMode))
+            if (!currentEditingCell.Equals(new GraficCell()))
             {
                 EnterCell();
             }
@@ -237,22 +220,16 @@ namespace GraficRedactor
             ReturnToStandart(ClearEnteringArea);
         }
 
-        internal void DisplayPaletteIfNeeded(Palette palette)
+        internal void DisplayPalette(Palette palette)
         {
-            if (!palette.IsDisplayed)
-            {
-                ClearEnteringArea();
-                DisplayCollection(palette.GetPaletteList(), palette.OffSet);
-                palette.IsDisplayed = true;
-                cursorOutMenus = new Cell(cursor);
-                cursor.MakeEqual(palette.LastPosition);
-            }
+            ClearEnteringArea();
+            DisplayCollection(palette.GetPaletteList(), palette.OffSet);
+            cursorOutMenus = new Cell(cursor);
+            cursor.MakeEqual(palette.LastPosition);
         }
 
         internal void ReturnToStandart(Action clearing, bool returnCursor = true)
         {
-            SetPalettesNotDisplayed();
-            mode = RedactMode.GeneralMode;
             clearing();
             if (returnCursor)
             {
@@ -260,7 +237,6 @@ namespace GraficRedactor
             }
             DisplayCellIfEditing();
             Console.SetCursorPosition(cursor.X, cursor.Y);
-            keyHandler.GeneralMode(null);
         }
 
         private void DisplayCellIfEditing()
@@ -404,53 +380,19 @@ namespace GraficRedactor
             return "both";
         }
 
-        private void SetPalettesNotDisplayed()
-        {
-            paletteColor.IsDisplayed = false;
-            paletteTextColor.IsDisplayed = false;
-        }
-
         internal void PrintLabel(string name)
         {
             var label = LabelsInfo.Where(g => g.Name == name).First();
             DisplayText(label.Text, label.Coordinates);
         }
 
-        internal void ChangeMode(ConsoleKeyInfo key)
+        internal void Move(ConsoleKey key, bool doEnterCheck = false)
         {
-            switch (key.Key)
+            MoveCursor(KeyArrowToOffset.Get(key));
+            if (doEnterCheck)
             {
-                case ConsoleKey.D1:
-                    mode = RedactMode.ColorMode;
-                    keyHandler.ColorMode(null);
-                    break;
-                case ConsoleKey.D2:
-                    mode = RedactMode.TextMode;
-                    keyHandler.TextMode(null);
-                    break;
-                case ConsoleKey.D3:
-                    mode = RedactMode.TextColorMode;
-                    keyHandler.TextColorMode(null);
-                    break;
-                case ConsoleKey.D4:
-                    mode = RedactMode.DelayMode;
-                    keyHandler.DelayMode(null);
-                    break;
-                case ConsoleKey.Escape:
-                    mode = RedactMode.ClosingMode;
-                    keyHandler.ClosingMode(null);
-                    break;
-                case ConsoleKey.H:
-                    mode = RedactMode.HotKeysMode;
-                    keyHandler.HotKeysMode(null);
-                    break;
+                EnterCellIfEditing();
             }
-        }
-
-        internal void Move(ConsoleKeyInfo key)
-        {
-            MoveCursor(KeyArrowToOffset.Get(key.Key));
-            EnterCellIfEditing();
         }
 
         internal void DisplayCollection(List<GraficCell> collection, Cell? offset = null)
@@ -539,22 +481,6 @@ namespace GraficRedactor
                 Console.WriteLine(e.Message);
             }
             return lines;
-        }
-
-        private string? RecordAndGetPath()
-        {
-            Console.Clear();
-            Console.WriteLine("Enter name:");
-            string? name = Console.ReadLine();
-            if (name != "")
-            {
-                path = graficRootPath + name + ".json";
-                return path;
-            }
-            else
-            {
-                return null;
-            }
         }
 
         private bool CreatingNeed()

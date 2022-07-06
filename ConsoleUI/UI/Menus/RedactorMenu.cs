@@ -11,9 +11,9 @@ namespace ConsoleUI
         }
 
         protected override void StartDisplaying()
-        {    
-            Redactor redactor = new Redactor();
-            redactor.Start();
+        {
+            RedactorApplication app = new RedactorApplication();
+            app.Start();
         }
 
         protected override ModeType? KeyRespond(ConsoleKey key)

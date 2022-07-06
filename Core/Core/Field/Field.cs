@@ -143,7 +143,7 @@
             {
                 return new Cell(cellPosition + offset);
             }
-            return cellPosition;
+            return new Cell(cellPosition);
         }
 
         private bool CheckForMove(Cell cell)

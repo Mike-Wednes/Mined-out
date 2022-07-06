@@ -8,7 +8,7 @@ namespace ConsoleUI
     {
         private ConsoleDisplayer displayer;
 
-        private readonly Cell fieldOffset = new Cell { X = 38, Y = 5 };
+        private Cell fieldOffset;
 
         private GameHandler gameHandler;
 
@@ -22,9 +22,10 @@ namespace ConsoleUI
         protected override void StartDisplaying()
         {
             Settings settings = new Settings();
-            gameHandler = new GameHandler(DisplayCell);
+            fieldOffset = new Cell { X = 38, Y = 5 };
             fieldOffset.Y += 2 - settings.FieldSize * 2;
             fieldOffset.X += 1 - settings.FieldSize * 1;
+            gameHandler = new GameHandler(DisplayCell);
             displayer.Clear();
             gameHandler.DisplayField();
             
@@ -89,7 +90,7 @@ namespace ConsoleUI
 
         private void GameOver()
         {
-            Cell adaptedCoordinates = gameHandler.GetSteppedCell();
+            Cell adaptedCoordinates = new Cell(gameHandler.GetSteppedCell());
             adaptedCoordinates.X = adaptedCoordinates.X + fieldOffset.X - 1;
             adaptedCoordinates.Y = adaptedCoordinates.Y + fieldOffset.Y - 1;
             displayer.DisplayGraficCollection("Explosion", adaptedCoordinates);

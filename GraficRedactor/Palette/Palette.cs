@@ -14,15 +14,12 @@ namespace GraficRedactor
 
         public Cell OffSet { get; set; }
 
-        public bool IsDisplayed { get; set; }
-
         public Cell LastPosition { get; set; }
 
         public Palette(Cell offsetInput, List<GraficCell> table)
         {
             Rows = 4;
             Cols = 4;
-            IsDisplayed = false;
             LastPosition = new Cell(offsetInput);
             OffSet = new Cell(offsetInput);
             paletteList = table;
