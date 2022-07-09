@@ -58,12 +58,12 @@ namespace Core
 
         public override string ToString()
         {
-            return $"X:{X};Y:{Y}";
+            return $"X:{X}; Y:{Y}";
         }
 
         public static Cell Parse(string input)
         {
-            Regex filter = new Regex(@"X:(?<X>\d+);Y:(?<Y>\d+);");
+            Regex filter = new Regex(@"X:(?<X>\d+); Y:(?<Y>\d+);");
             var match = filter.Matches(input).First();
             int x = int.Parse(match.Groups["X"].Value);
             int y = int.Parse(match.Groups["Y"].Value);

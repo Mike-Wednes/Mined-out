@@ -32,12 +32,12 @@ namespace GraficRedactor
 
         public override string ToString()
         {
-            return $"Name:{Name};Coordinates:{Coordinates.ToString()};Text:{Text};";
+            return $"Name: {Name}; Coordinates: {Coordinates.ToString()}; Text: {Text};";
         }
 
         public static StringInfo Parse(string input)
         {
-            Regex filter = new Regex(@"Name:(?<Name>.+);Coordinates:(?<Coordinates>X:\d+;Y:\d+;)Text:(?<Text>.*);");
+            Regex filter = new Regex(@"Name: (?<Name>.+); Coordinates: (?<Coordinates>X:\d+; Y:\d+;) Text:(?<Text>.*);");
             var match = filter.Matches(input).First();
             string name = match.Groups["Name"].Value;
             string coordinates = match.Groups["Coordinates"].Value;

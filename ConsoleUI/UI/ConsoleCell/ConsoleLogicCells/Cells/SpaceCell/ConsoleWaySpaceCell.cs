@@ -11,18 +11,18 @@ namespace ConsoleUI
         GraficCell IConsoleLogicCell.Identify()
         {
             var cell = new GraficCell(X, Y);
-            //if (this.View == CellView.Visible)
-            //{
+            if (this.View == CellView.Visible)
+            {
                 cell.Color = ConsoleColor.White;
-            //}
-            //if (this.IsVisited == true)
-            //{
-            //    cell.Color = ConsoleColor.DarkGray;
-            //}
-            //if (this.IsMarked == true)
-            //{
-            //    cell.Color = ConsoleColor.Red;
-            //}
+            }
+            if (this.IsVisited == true)
+            {
+                cell.Color = ConsoleColor.DarkGray;
+            }
+            if (this.IsMarked == true)
+            {
+                cell.Color = ConsoleColor.Red;
+            }
             return cell;
         }
     }
