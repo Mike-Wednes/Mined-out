@@ -278,8 +278,7 @@ namespace GraficRedactor
                 IncrementDoToDirecion(ref startValue, endValue);
                 added++;
             }
-            while (added != length);
-            
+            while (added != length);            
         }
 
         internal void Delete()
@@ -545,7 +544,6 @@ namespace GraficRedactor
                 }
                 jsonformatter.WriteObject(file, currentCollection);
                 file.Dispose();
-
             }
             catch (Exception e)
             {

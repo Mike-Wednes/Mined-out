@@ -80,6 +80,5 @@ namespace GraficRedactor
                 return new List<GraficCell>();
             }
         }
-
     }
 }

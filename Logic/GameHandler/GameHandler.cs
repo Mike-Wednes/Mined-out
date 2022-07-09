@@ -41,8 +41,7 @@ namespace Logic
             foreach(var cell in changedCells)
             {
                 displayCell(cell);
-            }
-            
+            }            
         }
 
         private object locker = new();
