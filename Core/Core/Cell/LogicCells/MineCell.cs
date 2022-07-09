@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class MineCell : LogicCell
+    public class MineCell : LogicCell, IDamaging
     {
         public MineCell(Cell cell)
             : this(cell.X, cell.Y)

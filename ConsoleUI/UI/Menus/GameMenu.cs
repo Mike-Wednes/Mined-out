@@ -75,11 +75,11 @@ namespace ConsoleUI
         private ModeType CheckCurrentCell()
         {
             var stepped = gameHandler.GetCurrentCell();
-            if (stepped.GetType() == typeof(MineCell))
+            if (stepped as IDamaging != null)
             {
                 return ProcessGameOver();
             }
-            if (stepped.GetType() == typeof(FinishSpaceCell))
+            if (stepped as IFinish != null)
             {
                 return ProcessFinish();
             }

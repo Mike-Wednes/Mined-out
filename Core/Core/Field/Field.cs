@@ -165,7 +165,7 @@
 
         private bool IsPassable(Cell cell)
         {
-            if((logicCells[cell.Y, cell.X] as BorderCell) != null)
+            if((logicCells[cell.Y, cell.X] as IImpassable) != null)
             {
                 return false;
             }
@@ -200,7 +200,7 @@
                 GenerateWay(stepHistory);
                 return;
             }
-            if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
+            if (IsNearFinish(stepHistory.Last()))
             {
                 return;
             }
@@ -218,6 +218,15 @@
             stepHistory.Add(newPosition);
             LogicCell.MapToType(ref logicCells[newPosition.Y, newPosition.X], typeof(WaySpaceCell));
             GenerateWay(stepHistory);   
+        }
+
+        private bool IsNearFinish(Cell cell)
+        {
+            if(logicCells[cell.Y - 1, cell.X] as IFinish != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         private Direction? FindProperDirection(List<LogicCell> stepHistory)

@@ -96,11 +96,11 @@ namespace Minew_OUT.Layers
         private void CheckStepped()
         {
             var stepped = gameHandler.GetCurrentCell();
-            if (stepped.GetType() == typeof(MineCell))
+            if (stepped as IDamaging != null)
             {
                 GameOver(stepped);
             }
-            if (stepped.GetType() == typeof(FinishSpaceCell))
+            if (stepped as IFinish != null)
             {
                 Finish();
             }

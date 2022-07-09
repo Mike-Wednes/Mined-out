@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class FinishSpaceCell : SpaceCell
+    public class FinishSpaceCell : SpaceCell, IFinish
     {
         public FinishSpaceCell(Cell cell)
             : this(cell.X, cell.Y)

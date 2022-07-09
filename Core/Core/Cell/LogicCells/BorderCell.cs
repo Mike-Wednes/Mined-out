@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class BorderCell : LogicCell
+    public class BorderCell : LogicCell, IImpassable
     {
         public BorderCell(Cell cell)
             : this(cell.X, cell.Y)
