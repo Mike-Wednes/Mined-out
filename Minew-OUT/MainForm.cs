@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Minew_OUT
+﻿namespace Minew_OUT
 {
     public partial class MainForm : Form
     {
         private int currentLayerIndex;
+
+        private UserControl currentLayer;
 
         public MainForm()
         {
@@ -20,6 +12,7 @@ namespace Minew_OUT
             KeyPreview = true;
             this.MaximumSize = new Size(1200, 900);
             this.MinimumSize = this.MaximumSize;
+            currentLayer = new Layers.StartMenu(this);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -29,11 +22,9 @@ namespace Minew_OUT
 
         public void ChangeLayer(UserControl layer)
         {
+            this.Controls.Remove(currentLayer);
             this.Controls.Add(layer);
-            if (this.Controls.Count > 1)
-            {
-                this.Controls.RemoveAt(this.Controls.Count - 2);
-            }
+            currentLayer = layer;
         }
     }
 }
