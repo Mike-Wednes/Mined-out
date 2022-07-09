@@ -6,15 +6,10 @@ namespace ConsoleUI
     {
         public override ModeType ThisMode { get { return ModeType.Start; } }
 
-        public StartMenu()
-        {
-
-        }
-
 
         protected override ModeType? KeyRespond(ConsoleKey key)
         {
-            ChangeCursorLevel(ModeType.Start, 1, 3, key);
+            ChangeCursorLevel(ThisMode, 1, 3, key);
             if (key == ConsoleKey.Enter)
             {
                 return (ModeType)cursorLevel;
@@ -23,7 +18,7 @@ namespace ConsoleUI
             {
                 return null;
             }
-            return ModeType.Start;
+            return ThisMode;
         }
     }
 }

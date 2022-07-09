@@ -110,16 +110,15 @@
             return logicCells[position.Y, position.X];
         }
 
-        public List<LogicCell> GetMoveLine(Cell offset)
+        public List<LogicCell> GetMovePairCell(Cell offset)
         {
-            List<LogicCell> moveLine = new List<LogicCell>();
-
             CurrentPositionVisited();
-            moveLine.Add(logicCells[player.Y, player.X]);
-
+            List<LogicCell> moveLine = new List<LogicCell>()
+            {
+                logicCells[player.Y, player.X],
+                player
+            };
             MovePlayer(offset);
-            moveLine.Add(player);
-
             return moveLine;
         }
 

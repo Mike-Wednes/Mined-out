@@ -47,6 +47,7 @@
             this.FieldArea.Size = new System.Drawing.Size(635, 635);
             this.FieldArea.TabIndex = 0;
             this.FieldArea.TabStop = false;
+            this.FieldArea.Paint += new System.Windows.Forms.PaintEventHandler(this.FieldArea_Paint_1);
             // 
             // HeadPicture
             // 

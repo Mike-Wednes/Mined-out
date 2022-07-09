@@ -63,12 +63,6 @@ namespace Minew_OUT.Layers
 
         private void Game_Load(object sender, EventArgs e)
         {
-            //StartHeadDisplaying();
-            //Task.Factory.StartNew(() =>
-            //{
-            //    Thread.Sleep(200);
-            //    gameHandler.DisplayField();
-            //});
         }
 
 
@@ -76,7 +70,6 @@ namespace Minew_OUT.Layers
         {
             var cellBitmap = converter.Convert(cell);
             FieldArea.CreateGraphics().DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
-            //FieldArea.Image = FieldArea.CreateGraphics();
         }
 
         private void FieldArea_Paint(object sender, PaintEventArgs e)
@@ -102,7 +95,7 @@ namespace Minew_OUT.Layers
 
         private void CheckStepped()
         {
-            var stepped = gameHandler.GetSteppedCell();
+            var stepped = gameHandler.GetCurrentCell();
             if (stepped.GetType() == typeof(MineCell))
             {
                 GameOver(stepped);
@@ -214,6 +207,11 @@ namespace Minew_OUT.Layers
             Bitmap picture = new Bitmap(@"Grafics\Animations\HeadLogo\" + currentLogoNumber + ".bmp");
             HeadPicture.CreateGraphics().DrawImage(picture, 140, 0, 330, 86);
             currentLogoNumber = 1 - currentLogoNumber;
+        }
+
+        private void FieldArea_Paint_1(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

@@ -53,8 +53,7 @@ namespace ConsoleUI
         {
             TryMove(key);
             TryMark(key);
-            return CheckCurrent();
-            
+            return CheckCurrentCell();            
         }
 
         private void TryMark(ConsoleKey key)
@@ -73,24 +72,23 @@ namespace ConsoleUI
             }
         }
 
-        private ModeType CheckCurrent()
+        private ModeType CheckCurrentCell()
         {
-            var stepped = gameHandler.GetSteppedCell();
+            var stepped = gameHandler.GetCurrentCell();
             if (stepped.GetType() == typeof(MineCell))
             {
-                GameOver();
-                return ModeType.Start;
+                return ProcessGameOver();
             }
             if (stepped.GetType() == typeof(FinishSpaceCell))
             {
-                Finish();
+                return ProcessFinish();
             }
-            return ModeType.Game;
+            return ThisMode;
         }
 
-        private void GameOver()
+        private ModeType ProcessGameOver()
         {
-            Cell adaptedCoordinates = new Cell(gameHandler.GetSteppedCell());
+            Cell adaptedCoordinates = new Cell(gameHandler.GetCurrentCell());
             adaptedCoordinates.X = adaptedCoordinates.X + fieldOffset.X - 1;
             adaptedCoordinates.Y = adaptedCoordinates.Y + fieldOffset.Y - 1;
             displayer.DisplayGraficCollection("Explosion", adaptedCoordinates);
@@ -99,15 +97,17 @@ namespace ConsoleUI
             displayer.Clear();
             displayer.DisplayGraficCollection("GameOver", new Cell(23, 5));
             Thread.Sleep(1000);
+            return ModeType.Start;
         }
 
-        private void Finish()
+        private ModeType ProcessFinish()
         {
             gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
             Thread.Sleep(2000);
             displayer.Clear();
             displayer.DisplayGraficCollection("Finish", new Cell(23, 5));
             Thread.Sleep(1000);
+            return ModeType.Start;
         }
     }
 }

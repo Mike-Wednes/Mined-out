@@ -6,34 +6,33 @@ namespace Logic
     {
         private Field field;
 
-        private Action<LogicCell> displaying;
+        private Action<LogicCell> displayCell;
 
         public GameHandler(Action<LogicCell> displaying)
         {
-            this.displaying = displaying;
+            this.displayCell = displaying;
             Settings settings = new Settings();
             field = new Field(settings.FieldSize, settings.DifficultyLevel);
         }
 
         public void MovePlayer(Direction direction)
         {
-            var moveLine = field.GetMoveLine(DirectionToOffset.Get(direction));
+            var moveLine = field.GetMovePairCell(DirectionToOffset.Get(direction));
             foreach(var logicCell in moveLine)
             {
-                displaying(logicCell);
+                displayCell(logicCell);
             }
         }
 
-        public LogicCell GetSteppedCell()
+        public LogicCell GetCurrentCell()
         {
-            return field.GetCell(field.GetPlayer());
-            
+            return field.GetCell(field.GetPlayer());            
         }
 
         public void Mark(Direction direction)
         {
             var markedCell = field.MarkCell(DirectionToOffset.Get(direction));
-            displaying(markedCell);
+            displayCell(markedCell);
         }
 
         public void ChangeViewMode(Type type, CellView view)
@@ -41,7 +40,7 @@ namespace Logic
             var changedCells = field.ReturnChangedCell(type, view);
             foreach(var cell in changedCells)
             {
-                displaying(cell);
+                displayCell(cell);
             }
             
         }
@@ -53,9 +52,9 @@ namespace Logic
             LogicCell[,] cells = field.GetCells();
             foreach (LogicCell cell in cells)
             {
-                displaying(cell);
+                displayCell(cell);
             }
-            displaying(field.GetPlayer());
+            displayCell(field.GetPlayer());
         }
 
         public Cell GetFieldSize()
