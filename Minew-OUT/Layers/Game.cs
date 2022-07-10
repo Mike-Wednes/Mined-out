@@ -24,6 +24,10 @@ namespace Minew_OUT.Layers
 
         private Dictionary<string, int> currentAnimationCadre;
 
+        private Bitmap fieldImage;
+
+        private Graphics fieldImageGraphics;
+
         public Game(MainForm mainForm)
         {
             InitializeComponent();
@@ -38,6 +42,8 @@ namespace Minew_OUT.Layers
                 {"HeadLogo", 1},
                 {"Loading", 1},
             };
+            fieldImage = new Bitmap(FieldArea.Image);
+            fieldImageGraphics = Graphics.FromImage(fieldImage);
         }
 
         private void SetScale()
@@ -67,17 +73,15 @@ namespace Minew_OUT.Layers
         private void Game_Load(object sender, EventArgs e)
         {
             DoWithDelay(() => gameHandler.DisplayField(), 1);
-            DoWithDelay(() => loadingLabel.Visible = false, 50);
+            DoWithDelay(() => loadingLabel.Visible = false, 500);
             timer1.Start();
         }
 
         private void DisplayCell(LogicCell cell)
         {
             var cellBitmap = converter.Convert(cell);
-            var bmp = new Bitmap(FieldArea.Image);
-            Graphics g = Graphics.FromImage(bmp);
-            g.DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
-            FieldArea.Image = bmp;
+            fieldImageGraphics.DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
+            FieldArea.Image = fieldImage;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -113,7 +117,7 @@ namespace Minew_OUT.Layers
         {
             DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * cellScale, (cell.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
             gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
-            DoWithDelay(() => { FieldArea.Hide(); }, 1000);
+            DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
             DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);
             DoWithDelay(() => { GameOverLabel2.Visible = true;}, 3000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 5000);
@@ -122,9 +126,16 @@ namespace Minew_OUT.Layers
 
         private void Finish()
         {
-            DoWithDelay(() => { FieldArea.Hide(); }, 1000);
+            ClearLogo();
+            DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
             DoWithDelay(() => { FinishLabel.Visible = true; }, 2000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 4000);
+        }
+
+        private void ClearLogo()
+        {
+            timer1.Stop();
+            HeadLogo.Refresh();
         }
 
         private void DoWithDelay(Action action, int delay)
