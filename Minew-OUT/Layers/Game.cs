@@ -24,6 +24,8 @@ namespace Minew_OUT.Layers
 
         private Dictionary<string, int> currentAnimationCadre;
 
+        private bool doProcessingKeys;
+
         private Bitmap fieldImage;
 
         private Graphics fieldImageGraphics;
@@ -43,7 +45,8 @@ namespace Minew_OUT.Layers
                 {"Loading", 1},
             };
             fieldImage = new Bitmap(FieldArea.Image);
-            fieldImageGraphics = Graphics.FromImage(fieldImage);
+            fieldImageGraphics = Graphics.FromImage(FieldArea.Image);
+            doProcessingKeys = true;
         }
 
         private void SetScale()
@@ -73,7 +76,7 @@ namespace Minew_OUT.Layers
         private void Game_Load(object sender, EventArgs e)
         {
             DoWithDelay(() => gameHandler.DisplayField(), 1);
-            DoWithDelay(() => loadingLabel.Visible = false, 500);
+            DoWithDelay(() => { loadingLabel.Hide(); FieldArea.Visible = true; }, 500);
             timer1.Start();
         }
 
@@ -81,13 +84,16 @@ namespace Minew_OUT.Layers
         {
             var cellBitmap = converter.Convert(cell);
             fieldImageGraphics.DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
-            FieldArea.Image = fieldImage;
+            FieldArea.Refresh();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            TryMove(keyData);
-            TryMark(keyData);
+            if (doProcessingKeys)
+            {
+                TryMove(keyData);
+                TryMark(keyData);
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -121,15 +127,15 @@ namespace Minew_OUT.Layers
             DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);
             DoWithDelay(() => { GameOverLabel2.Visible = true;}, 3000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 5000);
-            Thread.Sleep(50);
+            doProcessingKeys = false;
         }
 
         private void Finish()
         {
-            ClearLogo();
             DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
             DoWithDelay(() => { FinishLabel.Visible = true; }, 2000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 4000);
+            doProcessingKeys = false;
         }
 
         private void ClearLogo()

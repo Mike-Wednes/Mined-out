@@ -49,6 +49,7 @@
             this.FieldArea.Size = new System.Drawing.Size(635, 635);
             this.FieldArea.TabIndex = 0;
             this.FieldArea.TabStop = false;
+            this.FieldArea.Visible = false;
             // 
             // HeadLogo
             // 
@@ -102,9 +103,10 @@
             // loadingLabel
             // 
             this.loadingLabel.AutoSize = true;
+            this.loadingLabel.BackColor = System.Drawing.SystemColors.Desktop;
             this.loadingLabel.Font = new System.Drawing.Font("Bauhaus 93", 120F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.loadingLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.loadingLabel.Location = new System.Drawing.Point(125, 252);
+            this.loadingLabel.Location = new System.Drawing.Point(112, 268);
             this.loadingLabel.Name = "loadingLabel";
             this.loadingLabel.Size = new System.Drawing.Size(1008, 227);
             this.loadingLabel.TabIndex = 6;
