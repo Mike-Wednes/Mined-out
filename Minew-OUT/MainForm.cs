@@ -25,6 +25,7 @@
             this.Controls.Remove(currentLayer);
             this.Controls.Add(layer);
             currentLayer = layer;
+            currentLayer.Focus();
         }
     }
 }

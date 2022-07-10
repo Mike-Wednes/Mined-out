@@ -29,45 +29,34 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Game));
             this.FieldArea = new System.Windows.Forms.PictureBox();
-            this.HeadPicture = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.HeadLogo = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.GameOverLabel1 = new System.Windows.Forms.Label();
             this.GameOverLabel2 = new System.Windows.Forms.Label();
             this.FinishLabel = new System.Windows.Forms.Label();
+            this.loadingLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.HeadPicture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeadLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // FieldArea
             // 
+            this.FieldArea.Image = ((System.Drawing.Image)(resources.GetObject("FieldArea.Image")));
             this.FieldArea.Location = new System.Drawing.Point(283, 133);
             this.FieldArea.Name = "FieldArea";
             this.FieldArea.Size = new System.Drawing.Size(635, 635);
             this.FieldArea.TabIndex = 0;
             this.FieldArea.TabStop = false;
-            this.FieldArea.Paint += new System.Windows.Forms.PaintEventHandler(this.FieldArea_Paint_1);
             // 
-            // HeadPicture
+            // HeadLogo
             // 
-            this.HeadPicture.Location = new System.Drawing.Point(283, 30);
-            this.HeadPicture.Name = "HeadPicture";
-            this.HeadPicture.Size = new System.Drawing.Size(635, 97);
-            this.HeadPicture.TabIndex = 1;
-            this.HeadPicture.TabStop = false;
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button1.Font = new System.Drawing.Font("Bauhaus 93", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button1.Location = new System.Drawing.Point(44, 614);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(188, 152);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "click here";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.HeadLogo.Location = new System.Drawing.Point(283, 30);
+            this.HeadLogo.Name = "HeadLogo";
+            this.HeadLogo.Size = new System.Drawing.Size(635, 97);
+            this.HeadLogo.TabIndex = 1;
+            this.HeadLogo.TabStop = false;
             // 
             // timer1
             // 
@@ -110,22 +99,33 @@
             this.FinishLabel.Text = "finish";
             this.FinishLabel.Visible = false;
             // 
+            // loadingLabel
+            // 
+            this.loadingLabel.AutoSize = true;
+            this.loadingLabel.Font = new System.Drawing.Font("Bauhaus 93", 120F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.loadingLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.loadingLabel.Location = new System.Drawing.Point(125, 252);
+            this.loadingLabel.Name = "loadingLabel";
+            this.loadingLabel.Size = new System.Drawing.Size(1008, 227);
+            this.loadingLabel.TabIndex = 6;
+            this.loadingLabel.Text = "loading...";
+            // 
             // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Desktop;
+            this.Controls.Add(this.loadingLabel);
             this.Controls.Add(this.FinishLabel);
             this.Controls.Add(this.GameOverLabel2);
             this.Controls.Add(this.GameOverLabel1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.HeadPicture);
+            this.Controls.Add(this.HeadLogo);
             this.Controls.Add(this.FieldArea);
             this.Name = "Game";
             this.Size = new System.Drawing.Size(1200, 900);
             this.Load += new System.EventHandler(this.Game_Load);
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.HeadPicture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeadLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -134,11 +134,11 @@
         #endregion
 
         private PictureBox FieldArea;
-        private PictureBox HeadPicture;
-        private Button button1;
+        private PictureBox HeadLogo;
         private System.Windows.Forms.Timer timer1;
         private Label GameOverLabel1;
         private Label GameOverLabel2;
         private Label FinishLabel;
+        private Label loadingLabel;
     }
 }

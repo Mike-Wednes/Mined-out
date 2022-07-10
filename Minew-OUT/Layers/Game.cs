@@ -18,13 +18,11 @@ namespace Minew_OUT.Layers
 
         private CellConverter converter;
 
-        private bool button1Clicked = false;
-
         private MainForm mainForm;
 
-        private int currentLogoNumber = 0;
-
         private GameHandler gameHandler;
+
+        private Dictionary<string, int> currentAnimationCadre;
 
         public Game(MainForm mainForm)
         {
@@ -34,7 +32,12 @@ namespace Minew_OUT.Layers
             gameHandler = new GameHandler(DisplayCell);
             converter = new CellConverter(cellScale);
             SetSizes();
-            PlaceBoxes(); 
+            PlaceBoxes();
+            currentAnimationCadre = new Dictionary<string, int>()
+            {
+                {"HeadLogo", 1},
+                {"Loading", 1},
+            };
         }
 
         private void SetScale()
@@ -56,25 +59,25 @@ namespace Minew_OUT.Layers
         {
             Point formMiddle = new Point(mainForm.Width / 2, mainForm.Height / 2);
             Point fieldMiddle = new Point(FieldArea.Width / 2, FieldArea.Height / 2);
-            int headWeight = HeadPicture.Width / 2;
+            int headWeight = HeadLogo.Width / 2;
             FieldArea.Location = new Point(formMiddle.X - fieldMiddle.X, formMiddle.Y - fieldMiddle.Y);
-            HeadPicture.Location = new Point(formMiddle.X - headWeight);
+            HeadLogo.Location = new Point(formMiddle.X - headWeight);
         }
 
         private void Game_Load(object sender, EventArgs e)
         {
+            DoWithDelay(() => gameHandler.DisplayField(), 1);
+            DoWithDelay(() => loadingLabel.Visible = false, 50);
+            timer1.Start();
         }
-
 
         private void DisplayCell(LogicCell cell)
         {
             var cellBitmap = converter.Convert(cell);
-            FieldArea.CreateGraphics().DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
-        }
-
-        private void FieldArea_Paint(object sender, PaintEventArgs e)
-        {
-
+            var bmp = new Bitmap(FieldArea.Image);
+            Graphics g = Graphics.FromImage(bmp);
+            g.DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
+            FieldArea.Image = bmp;
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -110,15 +113,16 @@ namespace Minew_OUT.Layers
         {
             DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * cellScale, (cell.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
             gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
-            DoWithDelay(() => { FieldArea.Refresh(); }, 1000);
+            DoWithDelay(() => { FieldArea.Hide(); }, 1000);
             DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);
             DoWithDelay(() => { GameOverLabel2.Visible = true;}, 3000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 5000);
+            Thread.Sleep(50);
         }
 
         private void Finish()
         {
-            DoWithDelay(() => { FieldArea.Refresh(); }, 1000);
+            DoWithDelay(() => { FieldArea.Hide(); }, 1000);
             DoWithDelay(() => { FinishLabel.Visible = true; }, 2000);
             DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 4000);
         }
@@ -177,41 +181,24 @@ namespace Minew_OUT.Layers
             return bitmaps;
         }
 
-        private void Game_Enter(object sender, EventArgs e)
-        {
-        
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (!button1Clicked)
-            {
-                timer1.Start();
-                button1.Text = "go back";
-                gameHandler.DisplayField();
-                button1Clicked = true;
-            }
-            else
-            {
-                mainForm.ChangeLayer(new StartMenu(mainForm));
-            }
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
-            DrawLogo();
+            DrawAnimationCadre("HeadLogo", 2, new Point(140, 0), new Point(330, 86));
         }
 
-        private void DrawLogo()
+        private void DrawAnimationCadre(string animationName, int cadreAmount, Point size, Point location)
         {
-            Bitmap picture = new Bitmap(@"Grafics\Animations\HeadLogo\" + currentLogoNumber + ".bmp");
-            HeadPicture.CreateGraphics().DrawImage(picture, 140, 0, 330, 86);
-            currentLogoNumber = 1 - currentLogoNumber;
-        }
-
-        private void FieldArea_Paint_1(object sender, PaintEventArgs e)
-        {
-
+            Bitmap picture = new Bitmap(@"Grafics\Animations\" + animationName + @"\" + currentAnimationCadre[animationName] + ".bmp");
+            var pictureBox = this.Controls.Find(animationName, false).First() as PictureBox;
+            if (pictureBox == null)
+            {
+                return;
+            }
+            pictureBox.CreateGraphics().DrawImage(picture, size.X, size.Y, location.X, location.Y);
+            currentAnimationCadre[animationName]++;
+            currentAnimationCadre[animationName] = currentAnimationCadre[animationName] > cadreAmount
+                ? 1
+                : currentAnimationCadre[animationName];
         }
     }
 }

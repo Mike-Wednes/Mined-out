@@ -48,10 +48,10 @@
     <None Update="Grafics\Animations\Boom\Delay.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Grafics\Animations\HeadLogo\0.bmp">
+    <None Update="Grafics\Animations\HeadLogo\1.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Grafics\Animations\HeadLogo\1.bmp">
+    <None Update="Grafics\Animations\HeadLogo\2.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Grafics\Animations\HeadLogo\Delay.txt">
