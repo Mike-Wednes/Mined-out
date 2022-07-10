@@ -22,6 +22,25 @@ namespace Logic
             {
                 displayCell(logicCell);
             }
+            explodeIfMine();
+        }
+
+        private void explodeIfMine()
+        {
+            Cell stepped = GetCurrentCell();
+            if (GetCurrentCell() is MineCell)
+            {
+                var exploded = field.ExplodeCells(stepped);
+                foreach(var cell in exploded)
+                {
+                    displayCell(cell);
+                }
+            }
+        }
+
+        public void ChangeType(Cell cell, Type type)
+        {
+            field.ChangeType(cell, type);
         }
 
         public LogicCell GetCurrentCell()
@@ -41,7 +60,7 @@ namespace Logic
             foreach(var cell in changedCells)
             {
                 displayCell(cell);
-            }            
+            }
         }
 
         private object locker = new();

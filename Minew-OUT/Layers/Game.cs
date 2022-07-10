@@ -75,9 +75,16 @@ namespace Minew_OUT.Layers
 
         private void Game_Load(object sender, EventArgs e)
         {
-            DoWithDelay(() => gameHandler.DisplayField(), 1);
-            DoWithDelay(() => { loadingLabel.Hide(); FieldArea.Visible = true; }, 500);
-            timer1.Start();
+            logoTimer.Start();
+            gameHandler.DisplayField();
+            DoWithDelay(() => ShowField(), 500);
+        }
+
+        private void ShowField()
+        {
+            loadingLabel.Hide(); 
+            FieldArea.Visible = true; 
+            HeadLogo.Visible = true;
         }
 
         private void DisplayCell(LogicCell cell)
@@ -111,6 +118,7 @@ namespace Minew_OUT.Layers
             var stepped = gameHandler.GetCurrentCell();
             if (stepped as IDamaging != null)
             {
+                gameHandler.ChangeType(stepped, typeof(BasicSpaceCell));
                 GameOver(stepped);
             }
             if (stepped as IFinish != null)
@@ -140,7 +148,7 @@ namespace Minew_OUT.Layers
 
         private void ClearLogo()
         {
-            timer1.Stop();
+            logoTimer.Stop();
             HeadLogo.Refresh();
         }
 

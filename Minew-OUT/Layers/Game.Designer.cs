@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Game));
             this.FieldArea = new System.Windows.Forms.PictureBox();
             this.HeadLogo = new System.Windows.Forms.PictureBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.logoTimer = new System.Windows.Forms.Timer(this.components);
             this.GameOverLabel1 = new System.Windows.Forms.Label();
             this.GameOverLabel2 = new System.Windows.Forms.Label();
             this.FinishLabel = new System.Windows.Forms.Label();
@@ -58,11 +58,12 @@
             this.HeadLogo.Size = new System.Drawing.Size(635, 97);
             this.HeadLogo.TabIndex = 1;
             this.HeadLogo.TabStop = false;
+            this.HeadLogo.Visible = false;
             // 
-            // timer1
+            // logoTimer
             // 
-            this.timer1.Interval = 800;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.logoTimer.Interval = 800;
+            this.logoTimer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // GameOverLabel1
             // 
@@ -137,7 +138,7 @@
 
         private PictureBox FieldArea;
         private PictureBox HeadLogo;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer logoTimer;
         private Label GameOverLabel1;
         private Label GameOverLabel2;
         private Label FinishLabel;

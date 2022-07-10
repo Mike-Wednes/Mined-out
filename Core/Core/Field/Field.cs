@@ -129,6 +129,30 @@
             player.MinesAround = MinesAroundPlayer();
         }
 
+        public List<LogicCell> ExplodeCells(Cell location)
+        {
+            List<LogicCell> cellList = new List<LogicCell>();
+            for (int j = location.Y - 1; j <= location.Y + 1; j++)
+            {
+                for (int i = location.X - 1; i <= location.X + 1; i++)
+                {
+                    if (j != location.Y || i != location.X)
+                    {
+                        LogicCell.MapToType(ref logicCells[j, i], typeof(BasicSpaceCell));
+                        cellList.Add(logicCells[j, i]);
+                    }        
+                }
+            }
+            player.MinesAround = MinesAroundPlayer() - 1;
+            cellList.Add(player);
+            return cellList;
+        }
+
+        public void ChangeType(Cell cell, Type type)
+        {
+            LogicCell.MapToType(ref logicCells[cell.Y, cell.X], type);
+        }
+
         private void CurrentPositionVisited()
         {
             LogicCell.MapToType(ref logicCells[player.Y, player.X], typeof(BasicSpaceCell));
