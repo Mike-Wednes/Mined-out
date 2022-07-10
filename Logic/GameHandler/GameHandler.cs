@@ -63,8 +63,6 @@ namespace Logic
             }
         }
 
-        private object locker = new();
-
         public void DisplayField()
         {
             LogicCell[,] cells = field.GetCells();
