@@ -91,7 +91,7 @@
         {
             if (key == ConsoleKey.T)
             {
-                redactor.DeleteLine();
+                redactor.doWithLine(redactor.DeletingLine);
             }
         }
 
@@ -114,7 +114,7 @@
         {
             if (key == ConsoleKey.R)
             {
-                redactor.AddLine();
+                redactor.doWithLine(redactor.AddingLine);
             }
         }
     }

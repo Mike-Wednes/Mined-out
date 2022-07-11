@@ -247,7 +247,7 @@ namespace GraficRedactor
             }
         }
 
-        internal void AddLine()
+        internal void doWithLine(Action<GraficCell, string, int, int> changing)
         {
             GraficCell start = new GraficCell(currentCollection.Last());
             if (start == null)
@@ -266,12 +266,17 @@ namespace GraficRedactor
             }
             int startValue = GetCellPropValue(differentProperty, start);
             int endValue = GetCellPropValue(differentProperty, finish);
+            changing(start, differentProperty, startValue, endValue);
+        }
+
+        internal void AddingLine(GraficCell sample, string differentProperty, int startValue, int endValue)
+        {
             int added = 0;
             int length = Math.Abs(startValue - endValue);
             IncrementDoToDirecion(ref startValue, endValue);
             do
             {
-                GraficCell newCell = new GraficCell(start);
+                GraficCell newCell = new GraficCell(sample);
                 typeof(GraficCell).GetProperty(differentProperty)?.SetValue(newCell, startValue);
                 currentCollection.Add(newCell);
                 DisplayCell(newCell);
@@ -299,30 +304,13 @@ namespace GraficRedactor
             }
         }
 
-        internal void DeleteLine()
+        internal void DeletingLine(GraficCell sample, string differentProperty, int startValue, int endValue)
         {
-            GraficCell start = new GraficCell(currentCollection.Last());
-            if (start == null)
-            {
-                return;
-            }
-            Cell finish = new Cell(cursor);
-            if (start.Equals(finish))
-            {
-                return;
-            }
-            string differentProperty = GetDifferentProperty(start, finish);
-            if (differentProperty == "both")
-            {
-                return;
-            }
-            int startValue = GetCellPropValue(differentProperty, start);
-            int endValue = GetCellPropValue(differentProperty, finish);
             int changed = 0;
             int length = Math.Abs(startValue - endValue);
             do
             {
-                GraficCell cell = new GraficCell(start);
+                GraficCell cell = new GraficCell(sample);
                 typeof(GraficCell).GetProperty(differentProperty)?.SetValue(cell, startValue);
                 Delete(cell, false);
                 IncrementDoToDirecion(ref startValue, endValue);
@@ -330,6 +318,8 @@ namespace GraficRedactor
             }
             while (changed != length);     
             ClearAndPrintStandart();
+
+            
         }
 
         internal void IncrementDoToDirecion(ref int startValue, int endValue)

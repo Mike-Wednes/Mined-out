@@ -1,4 +1,4 @@
-﻿namespace Minew_OUT.Layers
+﻿namespace WinFormsUI.Layers
 {
     partial class Guide
     {
@@ -151,6 +151,7 @@
             this.Controls.Add(this.introducingLabel);
             this.Name = "Guide";
             this.Size = new System.Drawing.Size(1200, 900);
+            this.Load += new System.EventHandler(this.Guide_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);

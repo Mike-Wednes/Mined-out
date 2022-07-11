@@ -1,4 +1,4 @@
-﻿namespace Minew_OUT.Layers
+﻿namespace WinFormsUI.Layers
 {
     partial class Settings
     {

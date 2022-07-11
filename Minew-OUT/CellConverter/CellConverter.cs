@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core;
+﻿using Core;
 
-namespace Minew_OUT
+namespace WinFormsUI
 {
     internal class CellConverter
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core;
 
-namespace Minew_OUT.Layers
+namespace WinFormsUI.Layers
 {
     internal static class KeyStorage
     {

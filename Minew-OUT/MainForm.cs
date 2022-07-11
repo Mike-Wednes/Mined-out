@@ -1,4 +1,4 @@
-﻿namespace Minew_OUT
+﻿namespace WinFormsUI
 {
     public partial class MainForm : Form
     {

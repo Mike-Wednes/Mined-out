@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Minew_OUT.Layers
+﻿namespace WinFormsUI.Layers
 {
     public partial class Guide : UserControl
     {
@@ -74,6 +64,11 @@ namespace Minew_OUT.Layers
         {
             DisplayOrder[currentAction].Invoke();
             currentAction++;
+        }
+
+        private void Guide_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
