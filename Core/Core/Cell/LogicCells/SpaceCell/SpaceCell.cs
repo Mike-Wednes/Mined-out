@@ -1,7 +1,15 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
+    [DataContract]
     public abstract class SpaceCell : LogicCell
     {
+        public SpaceCell()
+        {
+
+        }
+
         public SpaceCell(Cell cell)
             : this(cell.X, cell.Y)
         { }

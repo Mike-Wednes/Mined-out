@@ -4,13 +4,6 @@ namespace WinFormsUI
 {
     internal class CellConverter
     {
-        private readonly int cellScale;
-
-        public CellConverter(int cellScale)
-        {
-            this.cellScale = cellScale;
-        }
-
         public Bitmap Convert(LogicCell cell)
         {
             string path = "Grafics/";

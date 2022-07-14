@@ -45,7 +45,7 @@ namespace ConsoleUI
             {
                 return new GraficCell();
             }
-            consoleCell.MapProperies(cell);
+            consoleCell.MapProperties(cell);
             return ((IConsoleLogicCell)consoleCell).Identify();
         }
 

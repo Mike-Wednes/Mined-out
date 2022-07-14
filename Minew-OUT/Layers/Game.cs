@@ -5,10 +5,6 @@ namespace WinFormsUI.Layers
 {
     public partial class Game : UserControl
     {
-        private int cellScale;
-
-        private CellConverter converter;
-
         private MainForm mainForm;
 
         private GameHandler gameHandler;
@@ -17,42 +13,28 @@ namespace WinFormsUI.Layers
 
         private bool doProcessingKeys;
 
-        private Bitmap fieldImage;
-
-        private Graphics fieldImageGraphics;
+        private CellDisplayer displayer;
 
         public Game(MainForm mainForm)
         {
             InitializeComponent();
-            SetScale();
             this.mainForm = mainForm;
             gameHandler = new GameHandler(DisplayCell);
-            converter = new CellConverter(cellScale);
-            SetSizes();
+            displayer = new CellDisplayer(GetScale());
             PlaceBoxes();
             currentAnimationCadre = new Dictionary<string, int>()
             {
                 {"HeadLogo", 1},
                 {"Loading", 1},
             };
-            fieldImage = new Bitmap(FieldArea.Image);
-            fieldImageGraphics = Graphics.FromImage(FieldArea.Image);
             doProcessingKeys = true;
         }
 
-        private void SetScale()
+        private int GetScale()
         {
             int basicScale = 30;
             var fieldSize = new Core.Settings().FieldSize;
-            cellScale = basicScale * 21 / (17 + fieldSize * 4);
-        }
-
-        private void SetSizes()
-        {
-            this.Size = mainForm.Size;
-            var fieldSizeScaled = (gameHandler.GetFieldSize() * cellScale) + 5;
-            FieldArea.Size = new Size(fieldSizeScaled.X, fieldSizeScaled.Y);
-
+            return basicScale * 21 / (17 + fieldSize * 4);
         }
 
         private void PlaceBoxes()
@@ -80,8 +62,7 @@ namespace WinFormsUI.Layers
 
         private void DisplayCell(LogicCell cell)
         {
-            var cellBitmap = converter.Convert(cell);
-            fieldImageGraphics.DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
+            displayer.DrawCell(FieldArea.Image, cell);
             FieldArea.Refresh();
         }
 
@@ -120,7 +101,7 @@ namespace WinFormsUI.Layers
 
         private void GameOver(Cell cell)
         {
-            DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * cellScale, (cell.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
+            DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * displayer.Scale, (cell.Y - 1) * displayer.Scale, displayer.Scale * 3, displayer.Scale * 3);
             gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
             DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
             DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);

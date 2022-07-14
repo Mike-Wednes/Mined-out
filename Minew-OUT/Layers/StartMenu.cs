@@ -52,5 +52,10 @@
         {
             mainForm.ChangeLayer(new Layers.Settings(mainForm));
         }
+
+        private void workShopButton_Click(object sender, EventArgs e)
+        {
+            mainForm.ChangeLayer(new Layers.WorkShop(mainForm));
+        }
     }
 }

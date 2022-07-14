@@ -12,9 +12,13 @@
 
         public int Difficulty { get; set; }
 
-        public LogicCell GetPlayer()
+        public Field(LogicCell[,] cells, PlayerCell player)
         {
-            return new PlayerCell(player);
+            logicCells = cells;
+            Height = cells.GetLength(0);
+            Weidth = cells.GetLength(1);
+            this.player = player;
+            SetPlayer();
         }
 
         public Field(int size, int difficulty)
@@ -37,6 +41,11 @@
             GenerateWay();
             AddMines();
             SetPlayer();
+        }
+
+        public LogicCell GetPlayer()
+        {
+            return new PlayerCell(player);
         }
 
         private void SetPlayer()
