@@ -3,13 +3,13 @@
 namespace Core
 {
     [DataContract]
-    [KnownType(typeof(PlayerCell))]
     public class PlayerCell : LogicCell
     {
         [DataMember]
         public int MinesAround { get; set; }
 
         public PlayerCell()
+            :base()
         {
 
         }

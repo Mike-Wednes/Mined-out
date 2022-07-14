@@ -33,12 +33,14 @@ namespace WinFormsUI.Layers
         {
             level.Size.Y = (int)heightNumeric.Value;
             displayGrid();
+            displayLevel();
         }
 
         private void widthNumeric_ValueChanged(object sender, EventArgs e)
         {
             level.Size.X = (int)widthNumeric.Value;
             displayGrid();
+            displayLevel();
         }
 
         private void displayGrid()
@@ -57,11 +59,14 @@ namespace WinFormsUI.Layers
 
         private void displayLevel()
         {
-            clearField();
             displayGrid();
-            foreach (LogicCell cell in level.fieldCells)
+            foreach (LogicCell cell in level.Cells)
             {
-                displayCell(cell);
+                displayCell(cell, false);
+            }
+            if(level.PlayerCell != null)
+            {
+                displayCell(level.PlayerCell);
             }
         }
 
@@ -76,11 +81,19 @@ namespace WinFormsUI.Layers
             displayer.Scale = 630 / maxParameter;
         }
 
-        private void displayCell(LogicCell cell)
+        private void displayCell(LogicCell cell, bool doRefresh = true)
         {
             displayer.DrawCell(FieldArea.Image, cell);
             displayer.DrawGridElement(FieldArea.Image, cell);
-            FieldArea.Refresh();
+            if (doRefresh)
+            {
+                FieldArea.Refresh();
+            }
+        }
+
+        private void displayGridElement(Cell location)
+        {
+            displayGridElement(location.X, location.Y);
         }
 
         private void displayGridElement(int x, int y)
@@ -91,13 +104,44 @@ namespace WinFormsUI.Layers
 
         private void FieldArea_Click(object sender, EventArgs e)
         {
+            var addingCell = convertLogicCell();
+            deleteAt(addingCell);
+            if(edditingCell.GetType() == typeof(PlayerCell))
+            {
+                addPlayer((PlayerCell)addingCell);
+            }
+            else
+            {
+                level.Add(addingCell);
+            }
+            displayCell(addingCell);
+        }
+
+        private LogicCell convertLogicCell()
+        {
             var cursorPosition = cellUnderCursor();
             edditingCell.X = cursorPosition.X;
             edditingCell.Y = cursorPosition.Y;
             var addingCell = LogicCell.CreateCell(edditingCell.GetType());
             addingCell.MapProperties(edditingCell);
-            level.fieldCells.Add(addingCell);
-            displayCell(addingCell);
+            return addingCell;
+        }
+
+        private void deleteAt(Cell location)
+        {
+            if (level.TryRemove(location))
+            {
+                displayGridElement(location);
+            }
+        }
+
+        private void addPlayer(PlayerCell player)
+        {
+            if (level.PlayerCell != null)
+            {
+                displayGridElement(level.PlayerCell.X, level.PlayerCell.Y);
+            }
+            level.PlayerCell = player;
         }
 
         private Cell cellUnderCursor()
@@ -120,27 +164,48 @@ namespace WinFormsUI.Layers
             level.name = (string)nameBox.Text;
         }
 
-        private void saveButton_Click(object sender, EventArgs e)
+        private void typeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            level.Save();
+            edditingCell = LogicCell.CreateCell(ComboBoxesDictionary.type[typeBox.SelectedItem.ToString()]);
+            setCelldefault(edditingCell);
         }
 
-        private void openButton_Click(object sender, EventArgs e)
+        private void setCelldefault(LogicCell cell)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.InitialDirectory = "Levels/";
-                openFileDialog.Filter = "json files (*.json)| *.json";
-                openFileDialog.FilterIndex = 2;
-                openFileDialog.RestoreDirectory = true;
+            cell.View = CellView.Visible;
+        }
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string path = openFileDialog.FileName;
-                    level = new Level(path);
-                }
-            }
+        private void setLevel(Level level)
+        {
+            this.level = level;
+            setFormLevelFields();
             displayLevel();
+        }
+
+        private void setFormLevelFields()
+        {
+            nameBox.Text = level.name;
+            widthNumeric.Value = level.Size.X;
+            heightNumeric.Value = level.Size.Y;
+        }
+
+        private void backMenuItem_Click(object sender, EventArgs e)
+        {
+            mainForm.ChangeLayer(new StartMenu(mainForm));
+        }
+
+        private void OpenMenuStrip_Click(object sender, EventArgs e)
+        {
+            string path = Level.PathFromDirectory();
+            if (path != "")
+            {
+                setLevel(new Level(path));
+            }
+        }
+
+        private void saveMenuStip_Click(object sender, EventArgs e)
+        {
+            level.Save();
         }
     }
 }

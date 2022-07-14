@@ -1,7 +1,15 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
+    [DataContract]
     public class FinishSpaceCell : SpaceCell, IFinish
     {
+        public FinishSpaceCell()
+        {
+
+        }
+
         public FinishSpaceCell(Cell cell)
             : this(cell.X, cell.Y)
         { }

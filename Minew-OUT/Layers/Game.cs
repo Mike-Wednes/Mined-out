@@ -19,7 +19,6 @@ namespace WinFormsUI.Layers
         {
             InitializeComponent();
             this.mainForm = mainForm;
-            gameHandler = new GameHandler(DisplayCell);
             displayer = new CellDisplayer(GetScale());
             PlaceBoxes();
             currentAnimationCadre = new Dictionary<string, int>()
@@ -48,6 +47,13 @@ namespace WinFormsUI.Layers
 
         private void Game_Load(object sender, EventArgs e)
         {
+        }
+
+        private void start()
+        {
+            standartButton.Hide();
+            customButton.Hide();
+            loadingLabel.Visible = true;
             logoTimer.Start();
             gameHandler.DisplayField();
             DoWithDelay(() => ShowField(), 500);
@@ -196,6 +202,21 @@ namespace WinFormsUI.Layers
             currentAnimationCadre[animationName] = currentAnimationCadre[animationName] > cadreAmount
                 ? 1
                 : currentAnimationCadre[animationName];
+        }
+
+        private void standartButton_Click(object sender, EventArgs e)
+        {
+            gameHandler = new GameHandler(DisplayCell);
+            start();
+        }
+
+        private void customButton_Click(object sender, EventArgs e)
+        {
+            var path = Level.PathFromDirectory();
+            var level = new Level(path);
+            gameHandler = new GameHandler(DisplayCell, level.ConvertToField());
+            displayer.Scale = 630 / Math.Max( level.Size.X, level.Size.Y );
+            start();
         }
     }
 }

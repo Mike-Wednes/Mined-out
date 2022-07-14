@@ -3,7 +3,8 @@ using System.Reflection;
 
 namespace Core
 {
-    [DataContract, KnownType(typeof(BorderCell)), KnownType(typeof(BasicSpaceCell))]
+    [DataContract, KnownType(typeof(BorderCell)), KnownType(typeof(BasicSpaceCell)), KnownType(typeof(FinishSpaceCell)), 
+        KnownType(typeof(MineCell)), KnownType(typeof(PlayerCell))]
     public abstract class LogicCell : Cell
     {
         [DataMember]
@@ -16,6 +17,7 @@ namespace Core
         public bool IsMarked { get; set; }
 
         public LogicCell()
+            :base()
         { }
 
         public LogicCell(Cell cell)

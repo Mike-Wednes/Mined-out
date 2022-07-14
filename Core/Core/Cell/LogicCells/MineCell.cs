@@ -1,7 +1,15 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
+    [DataContract]
     public class MineCell : LogicCell, IDamaging
     {
+        public MineCell()
+        {
+
+        }
+
         public MineCell(Cell cell)
             : this(cell.X, cell.Y)
         { }

@@ -15,6 +15,12 @@ namespace Logic
             field = new Field(settings.FieldSize, settings.DifficultyLevel);
         }
 
+        public GameHandler(Action<LogicCell> displaying, Field field)
+        {
+            this.displayCell = displaying;
+            this.field = field;
+        }
+
         public void MovePlayer(Direction direction)
         {
             var moveLine = field.GetMovePairCell(DirectionToOffset.Get(direction));
