@@ -13,6 +13,12 @@ namespace WinFormsUI.Layers
 
         private EdditingTool? edditingTool;
 
+        private Highlighter toolHighlighter;
+
+        private Highlighter cursorHighlighter;
+
+        private CursorShape cursor;
+
         public WorkShop(MainForm mainForm)
         {
             InitializeComponent();
@@ -22,6 +28,9 @@ namespace WinFormsUI.Layers
             displayer = new CellDisplayer(new WorkShopCellConverter());
             this.mainForm = mainForm;
             edditingTool = null;
+            toolHighlighter = new Highlighter(highlighterBox1);
+            cursorHighlighter = new Highlighter(highlighterBox2);
+            dotCursorBox_Click(this, new EventArgs());
         }
 
         private void WorkShop_Load(object sender, EventArgs e)
@@ -104,7 +113,7 @@ namespace WinFormsUI.Layers
 
         private void FieldArea_Click(object sender, EventArgs e)
         {
-            useTool();
+            cursor.DoWithClick(useTool, locationUnderCursor());
         }
 
         private void deleteAt(Cell location)
@@ -141,7 +150,7 @@ namespace WinFormsUI.Layers
 
         private void typeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            edditingTool = new AddingTool(ComboBoxesDictionary.type[typeBox.Text]);
+            changeTool(new AddingTool(ComboBoxesDictionary.type[typeBox.Text]), typeBox);
         }
 
         private void setLevel(Level level)
@@ -187,16 +196,27 @@ namespace WinFormsUI.Layers
 
         private void clearPicture_Click(object sender, EventArgs e)
         {
-            edditingTool = new ClearingTool();
+            changeTool(new ClearingTool(), clearPicture);
         }
 
-        private void useTool()
+        private void changeTool(EdditingTool tool, Control sender)
+        {
+            edditingTool = tool;
+            toolHighlighter.Highlight(sender);
+        }
+
+        private void changeCursor(CursorShape cursor, Control sender)
+        {
+            this.cursor = cursor;
+            cursorHighlighter.Highlight(sender);
+        }
+
+        private void useTool(Cell location)
         {
             if (edditingTool == null)
             {
                 return;     
             }
-            var location = locationUnderCursor();
             var cell = level.Get(location);
             LogicCell? eddited;
             if (cell != null)
@@ -230,7 +250,17 @@ namespace WinFormsUI.Layers
 
         private void visibilityPicture_Click(object sender, EventArgs e)
         {
-            edditingTool = new VisibilityTool();
+            changeTool(new VisibilityTool(), visibilityPicture);
+        }
+
+        private void dotCursorBox_Click(object sender, EventArgs e)
+        {
+            changeCursor(new DotCursor(), dotCursorBox);
+        }
+
+        private void lineCursorBox_Click(object sender, EventArgs e)
+        {
+            changeCursor(new LineCursor(), lineCursorBox);
         }
     }
 }

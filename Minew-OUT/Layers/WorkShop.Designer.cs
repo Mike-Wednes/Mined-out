@@ -45,7 +45,12 @@
             this.OpenMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMenuStip = new System.Windows.Forms.ToolStripMenuItem();
             this.clearPicture = new System.Windows.Forms.PictureBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tools = new System.Windows.Forms.GroupBox();
+            this.highlighterBox1 = new System.Windows.Forms.PictureBox();
+            this.highlighterBox2 = new System.Windows.Forms.PictureBox();
+            this.cursors = new System.Windows.Forms.GroupBox();
+            this.lineCursorBox = new System.Windows.Forms.PictureBox();
+            this.dotCursorBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.heightNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthNumeric)).BeginInit();
@@ -53,7 +58,12 @@
             this.fieldParametersGroup.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.clearPicture)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.tools.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.highlighterBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highlighterBox2)).BeginInit();
+            this.cursors.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lineCursorBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dotCursorBox)).BeginInit();
             this.SuspendLayout();
             // 
             // FieldArea
@@ -176,7 +186,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Bauhaus 93", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label4.Location = new System.Drawing.Point(19, 41);
+            this.label4.Location = new System.Drawing.Point(19, 36);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(117, 32);
             this.label4.TabIndex = 16;
@@ -258,30 +268,88 @@
             this.clearPicture.TabStop = false;
             this.clearPicture.Click += new System.EventHandler(this.clearPicture_Click);
             // 
-            // groupBox1
+            // tools
             // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.visibilityPicture);
-            this.groupBox1.Controls.Add(this.typeBox);
-            this.groupBox1.Controls.Add(this.clearPicture);
-            this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.groupBox1.Location = new System.Drawing.Point(983, 70);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(160, 400);
-            this.groupBox1.TabIndex = 21;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "tools";
+            this.tools.Controls.Add(this.label4);
+            this.tools.Controls.Add(this.visibilityPicture);
+            this.tools.Controls.Add(this.typeBox);
+            this.tools.Controls.Add(this.clearPicture);
+            this.tools.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tools.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tools.Location = new System.Drawing.Point(983, 70);
+            this.tools.Name = "tools";
+            this.tools.Size = new System.Drawing.Size(160, 400);
+            this.tools.TabIndex = 21;
+            this.tools.TabStop = false;
+            this.tools.Text = "tools";
+            // 
+            // highlighterBox1
+            // 
+            this.highlighterBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.highlighterBox1.Location = new System.Drawing.Point(722, 517);
+            this.highlighterBox1.Name = "highlighterBox1";
+            this.highlighterBox1.Size = new System.Drawing.Size(116, 127);
+            this.highlighterBox1.TabIndex = 22;
+            this.highlighterBox1.TabStop = false;
+            this.highlighterBox1.Visible = false;
+            // 
+            // highlighterBox2
+            // 
+            this.highlighterBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.highlighterBox2.Location = new System.Drawing.Point(796, 229);
+            this.highlighterBox2.Name = "highlighterBox2";
+            this.highlighterBox2.Size = new System.Drawing.Size(55, 68);
+            this.highlighterBox2.TabIndex = 23;
+            this.highlighterBox2.TabStop = false;
+            this.highlighterBox2.Visible = false;
+            // 
+            // cursors
+            // 
+            this.cursors.Controls.Add(this.lineCursorBox);
+            this.cursors.Controls.Add(this.dotCursorBox);
+            this.cursors.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.cursors.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.cursors.Location = new System.Drawing.Point(983, 506);
+            this.cursors.Name = "cursors";
+            this.cursors.Size = new System.Drawing.Size(160, 257);
+            this.cursors.TabIndex = 23;
+            this.cursors.TabStop = false;
+            this.cursors.Text = "cursors";
+            // 
+            // lineCursorBox
+            // 
+            this.lineCursorBox.Image = ((System.Drawing.Image)(resources.GetObject("lineCursorBox.Image")));
+            this.lineCursorBox.Location = new System.Drawing.Point(76, 166);
+            this.lineCursorBox.Name = "lineCursorBox";
+            this.lineCursorBox.Size = new System.Drawing.Size(60, 60);
+            this.lineCursorBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.lineCursorBox.TabIndex = 17;
+            this.lineCursorBox.TabStop = false;
+            this.lineCursorBox.Click += new System.EventHandler(this.lineCursorBox_Click);
+            // 
+            // dotCursorBox
+            // 
+            this.dotCursorBox.Image = ((System.Drawing.Image)(resources.GetObject("dotCursorBox.Image")));
+            this.dotCursorBox.Location = new System.Drawing.Point(76, 43);
+            this.dotCursorBox.Name = "dotCursorBox";
+            this.dotCursorBox.Size = new System.Drawing.Size(60, 60);
+            this.dotCursorBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.dotCursorBox.TabIndex = 22;
+            this.dotCursorBox.TabStop = false;
+            this.dotCursorBox.Click += new System.EventHandler(this.dotCursorBox_Click);
             // 
             // WorkShop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Desktop;
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.cursors);
+            this.Controls.Add(this.tools);
             this.Controls.Add(this.fieldParametersGroup);
             this.Controls.Add(this.FieldArea);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.highlighterBox2);
+            this.Controls.Add(this.highlighterBox1);
             this.Name = "WorkShop";
             this.Size = new System.Drawing.Size(1200, 900);
             this.Load += new System.EventHandler(this.WorkShop_Load);
@@ -294,8 +362,13 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.clearPicture)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.tools.ResumeLayout(false);
+            this.tools.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.highlighterBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highlighterBox2)).EndInit();
+            this.cursors.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.lineCursorBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dotCursorBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -319,6 +392,11 @@
         private ToolStripMenuItem OpenMenuStrip;
         private ToolStripMenuItem saveMenuStip;
         private PictureBox clearPicture;
-        private GroupBox groupBox1;
+        private GroupBox tools;
+        private PictureBox highlighterBox1;
+        private PictureBox highlighterBox2;
+        private GroupBox cursors;
+        private PictureBox lineCursorBox;
+        private PictureBox dotCursorBox;
     }
 }
