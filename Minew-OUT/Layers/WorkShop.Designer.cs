@@ -40,18 +40,20 @@
             this.label4 = new System.Windows.Forms.Label();
             this.visibilityPicture = new System.Windows.Forms.PictureBox();
             this.fieldParametersGroup = new System.Windows.Forms.GroupBox();
-            this.cellParameters = new System.Windows.Forms.GroupBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.backMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenMenuStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMenuStip = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearPicture = new System.Windows.Forms.PictureBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.heightNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.widthNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.visibilityPicture)).BeginInit();
             this.fieldParametersGroup.SuspendLayout();
-            this.cellParameters.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.clearPicture)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // FieldArea
@@ -59,7 +61,7 @@
             this.FieldArea.Image = ((System.Drawing.Image)(resources.GetObject("FieldArea.Image")));
             this.FieldArea.Location = new System.Drawing.Point(283, 133);
             this.FieldArea.Name = "FieldArea";
-            this.FieldArea.Size = new System.Drawing.Size(635, 636);
+            this.FieldArea.Size = new System.Drawing.Size(630, 630);
             this.FieldArea.TabIndex = 1;
             this.FieldArea.TabStop = false;
             this.FieldArea.Click += new System.EventHandler(this.FieldArea_Click);
@@ -88,7 +90,7 @@
             // 
             // heightNumeric
             // 
-            this.heightNumeric.Location = new System.Drawing.Point(19, 215);
+            this.heightNumeric.Location = new System.Drawing.Point(25, 217);
             this.heightNumeric.Maximum = new decimal(new int[] {
             25,
             0,
@@ -163,9 +165,9 @@
             "Space",
             "Finish",
             "Player"});
-            this.typeBox.Location = new System.Drawing.Point(19, 91);
+            this.typeBox.Location = new System.Drawing.Point(19, 87);
             this.typeBox.Name = "typeBox";
-            this.typeBox.Size = new System.Drawing.Size(145, 28);
+            this.typeBox.Size = new System.Drawing.Size(127, 28);
             this.typeBox.TabIndex = 15;
             this.typeBox.SelectedIndexChanged += new System.EventHandler(this.typeBox_SelectedIndexChanged);
             // 
@@ -174,21 +176,22 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Bauhaus 93", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label4.Location = new System.Drawing.Point(19, 45);
+            this.label4.Location = new System.Drawing.Point(19, 41);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(125, 32);
+            this.label4.Size = new System.Drawing.Size(117, 32);
             this.label4.TabIndex = 16;
-            this.label4.Text = "cell type";
+            this.label4.Text = "add cell";
             // 
             // visibilityPicture
             // 
             this.visibilityPicture.Image = ((System.Drawing.Image)(resources.GetObject("visibilityPicture.Image")));
-            this.visibilityPicture.Location = new System.Drawing.Point(993, 524);
+            this.visibilityPicture.Location = new System.Drawing.Point(76, 290);
             this.visibilityPicture.Name = "visibilityPicture";
             this.visibilityPicture.Size = new System.Drawing.Size(60, 60);
             this.visibilityPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.visibilityPicture.TabIndex = 17;
             this.visibilityPicture.TabStop = false;
+            this.visibilityPicture.Click += new System.EventHandler(this.visibilityPicture_Click);
             // 
             // fieldParametersGroup
             // 
@@ -202,23 +205,10 @@
             this.fieldParametersGroup.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.fieldParametersGroup.Location = new System.Drawing.Point(40, 70);
             this.fieldParametersGroup.Name = "fieldParametersGroup";
-            this.fieldParametersGroup.Size = new System.Drawing.Size(167, 406);
+            this.fieldParametersGroup.Size = new System.Drawing.Size(160, 400);
             this.fieldParametersGroup.TabIndex = 19;
             this.fieldParametersGroup.TabStop = false;
             this.fieldParametersGroup.Text = "field parameters";
-            // 
-            // cellParameters
-            // 
-            this.cellParameters.Controls.Add(this.label4);
-            this.cellParameters.Controls.Add(this.typeBox);
-            this.cellParameters.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.cellParameters.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.cellParameters.Location = new System.Drawing.Point(974, 70);
-            this.cellParameters.Name = "cellParameters";
-            this.cellParameters.Size = new System.Drawing.Size(190, 406);
-            this.cellParameters.TabIndex = 20;
-            this.cellParameters.TabStop = false;
-            this.cellParameters.Text = "cell parameters";
             // 
             // menuStrip1
             // 
@@ -257,14 +247,39 @@
             this.saveMenuStip.Text = "Save";
             this.saveMenuStip.Click += new System.EventHandler(this.saveMenuStip_Click);
             // 
+            // clearPicture
+            // 
+            this.clearPicture.Image = ((System.Drawing.Image)(resources.GetObject("clearPicture.Image")));
+            this.clearPicture.Location = new System.Drawing.Point(76, 159);
+            this.clearPicture.Name = "clearPicture";
+            this.clearPicture.Size = new System.Drawing.Size(60, 60);
+            this.clearPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.clearPicture.TabIndex = 22;
+            this.clearPicture.TabStop = false;
+            this.clearPicture.Click += new System.EventHandler(this.clearPicture_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.visibilityPicture);
+            this.groupBox1.Controls.Add(this.typeBox);
+            this.groupBox1.Controls.Add(this.clearPicture);
+            this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.groupBox1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.groupBox1.Location = new System.Drawing.Point(983, 70);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(160, 400);
+            this.groupBox1.TabIndex = 21;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "tools";
+            // 
             // WorkShop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Desktop;
-            this.Controls.Add(this.cellParameters);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.fieldParametersGroup);
-            this.Controls.Add(this.visibilityPicture);
             this.Controls.Add(this.FieldArea);
             this.Controls.Add(this.menuStrip1);
             this.Name = "WorkShop";
@@ -276,10 +291,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.visibilityPicture)).EndInit();
             this.fieldParametersGroup.ResumeLayout(false);
             this.fieldParametersGroup.PerformLayout();
-            this.cellParameters.ResumeLayout(false);
-            this.cellParameters.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.clearPicture)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,10 +314,11 @@
         private Label label4;
         private PictureBox visibilityPicture;
         private GroupBox fieldParametersGroup;
-        private GroupBox cellParameters;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem backMenuItem;
         private ToolStripMenuItem OpenMenuStrip;
         private ToolStripMenuItem saveMenuStip;
+        private PictureBox clearPicture;
+        private GroupBox groupBox1;
     }
 }

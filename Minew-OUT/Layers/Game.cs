@@ -19,7 +19,7 @@ namespace WinFormsUI.Layers
         {
             InitializeComponent();
             this.mainForm = mainForm;
-            displayer = new CellDisplayer(GetScale());
+            displayer = new CellDisplayer(GetScale(), new CellConverter());
             PlaceBoxes();
             currentAnimationCadre = new Dictionary<string, int>()
             {

@@ -9,13 +9,13 @@ namespace WinFormsUI
 
         public int Scale { get; set; }
 
-        public CellDisplayer()
-            :this(default)
+        public CellDisplayer(CellConverter converter)
+            :this(default, converter)
         { }
 
-        public CellDisplayer(int scale)
+        public CellDisplayer(int scale, CellConverter converter)
         {
-            converter = new CellConverter();
+            this.converter = converter;
             Scale = scale;
         }
 

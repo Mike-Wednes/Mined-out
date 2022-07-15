@@ -138,7 +138,12 @@ namespace Logic
             return new Field(cellArray, PlayerCell);
         }
 
-        private LogicCell? Get(int x, int y)
+        public LogicCell? Get(Cell location)
+        {
+            return Get(location.X, location.Y);
+        }
+
+        public LogicCell? Get(int x, int y)
         {
             foreach(LogicCell cell in Cells)
             {

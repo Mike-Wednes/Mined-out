@@ -2,9 +2,9 @@
 
 namespace WinFormsUI
 {
-    internal class CellConverter
+    public class CellConverter
     {
-        public Bitmap Convert(LogicCell cell)
+        public virtual Bitmap Convert(LogicCell cell)
         {
             string path = "Grafics/";
             if (cell.GetType() == typeof(PlayerCell))

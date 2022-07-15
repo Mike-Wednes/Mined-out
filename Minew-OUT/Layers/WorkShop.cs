@@ -11,7 +11,7 @@ namespace WinFormsUI.Layers
 
         private CellDisplayer displayer;
 
-        private LogicCell edditingCell;
+        private EdditingTool? edditingTool;
 
         public WorkShop(MainForm mainForm)
         {
@@ -19,14 +19,14 @@ namespace WinFormsUI.Layers
             level = new Level();
             level.Size.Y = (int)heightNumeric.Value;
             level.Size.X = (int)widthNumeric.Value;
-            displayer = new CellDisplayer();
-            edditingCell = new BasicSpaceCell();
+            displayer = new CellDisplayer(new WorkShopCellConverter());
             this.mainForm = mainForm;
+            edditingTool = null;
         }
 
         private void WorkShop_Load(object sender, EventArgs e)
         {
-            displayGrid();
+            DoWithDelay(displayGrid, 10);
         }
 
         private void heighNumeric_ValueChanged(object sender, EventArgs e)
@@ -39,7 +39,6 @@ namespace WinFormsUI.Layers
         private void widthNumeric_ValueChanged(object sender, EventArgs e)
         {
             level.Size.X = (int)widthNumeric.Value;
-            displayGrid();
             displayLevel();
         }
 
@@ -66,8 +65,9 @@ namespace WinFormsUI.Layers
             }
             if(level.PlayerCell != null)
             {
-                displayCell(level.PlayerCell);
+                displayCell(level.PlayerCell, false);
             }
+            FieldArea.Refresh();
         }
 
         private void clearField()
@@ -104,27 +104,7 @@ namespace WinFormsUI.Layers
 
         private void FieldArea_Click(object sender, EventArgs e)
         {
-            var addingCell = convertLogicCell();
-            deleteAt(addingCell);
-            if(edditingCell.GetType() == typeof(PlayerCell))
-            {
-                addPlayer((PlayerCell)addingCell);
-            }
-            else
-            {
-                level.Add(addingCell);
-            }
-            displayCell(addingCell);
-        }
-
-        private LogicCell convertLogicCell()
-        {
-            var cursorPosition = cellUnderCursor();
-            edditingCell.X = cursorPosition.X;
-            edditingCell.Y = cursorPosition.Y;
-            var addingCell = LogicCell.CreateCell(edditingCell.GetType());
-            addingCell.MapProperties(edditingCell);
-            return addingCell;
+            useTool();
         }
 
         private void deleteAt(Cell location)
@@ -144,7 +124,7 @@ namespace WinFormsUI.Layers
             level.PlayerCell = player;
         }
 
-        private Cell cellUnderCursor()
+        private Cell locationUnderCursor()
         {
             Point location = this.PointToClient(Cursor.Position);
             location.X -= FieldArea.Location.X;
@@ -154,11 +134,6 @@ namespace WinFormsUI.Layers
             return new Cell(x, y);
         }
 
-        private void borderPicture_Click(object sender, EventArgs e)
-        {
-            edditingCell = new BorderCell();
-        }
-
         private void nameBox_TextChanged(object sender, EventArgs e)
         {
             level.name = (string)nameBox.Text;
@@ -166,13 +141,7 @@ namespace WinFormsUI.Layers
 
         private void typeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            edditingCell = LogicCell.CreateCell(ComboBoxesDictionary.type[typeBox.SelectedItem.ToString()]);
-            setCelldefault(edditingCell);
-        }
-
-        private void setCelldefault(LogicCell cell)
-        {
-            cell.View = CellView.Visible;
+            edditingTool = new AddingTool(ComboBoxesDictionary.type[typeBox.Text]);
         }
 
         private void setLevel(Level level)
@@ -206,6 +175,62 @@ namespace WinFormsUI.Layers
         private void saveMenuStip_Click(object sender, EventArgs e)
         {
             level.Save();
+        }
+
+        private void DoWithDelay(Action action, int delay)
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Tick += (Object? myObject, EventArgs myEventArgs) => { action(); timer.Stop(); };
+            timer.Interval = delay;
+            timer.Start();
+        }
+
+        private void clearPicture_Click(object sender, EventArgs e)
+        {
+            edditingTool = new ClearingTool();
+        }
+
+        private void useTool()
+        {
+            if (edditingTool == null)
+            {
+                return;     
+            }
+            var location = locationUnderCursor();
+            var cell = level.Get(location);
+            LogicCell? eddited;
+            if (cell != null)
+            {
+                deleteAt(cell);
+                eddited = edditingTool.GetEddited(cell);
+            }
+            else
+            {
+                eddited = edditingTool.GetEddited(location);
+            }
+            if (eddited == null)
+            {
+                return;
+            }
+            add(eddited);
+        }
+
+        private void add(LogicCell cell)
+        {
+            if (cell.GetType() == typeof(PlayerCell))
+            {
+                addPlayer((PlayerCell)cell);
+            }
+            else
+            {
+                level.Add(cell);
+            }
+            displayCell(cell);
+        }
+
+        private void visibilityPicture_Click(object sender, EventArgs e)
+        {
+            edditingTool = new VisibilityTool();
         }
     }
 }

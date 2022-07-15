@@ -48,7 +48,7 @@
             this.FieldArea.Image = ((System.Drawing.Image)(resources.GetObject("FieldArea.Image")));
             this.FieldArea.Location = new System.Drawing.Point(283, 133);
             this.FieldArea.Name = "FieldArea";
-            this.FieldArea.Size = new System.Drawing.Size(635, 635);
+            this.FieldArea.Size = new System.Drawing.Size(630, 630);
             this.FieldArea.TabIndex = 0;
             this.FieldArea.TabStop = false;
             this.FieldArea.Visible = false;

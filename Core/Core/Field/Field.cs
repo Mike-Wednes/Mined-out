@@ -145,7 +145,7 @@
             {
                 for (int i = location.X - 1; i <= location.X + 1; i++)
                 {
-                    if (j != location.Y || i != location.X)
+                    if ((j != location.Y || i != location.X) && IsInField(new Cell(i, j)))
                     {
                         LogicCell.MapToType(ref logicCells[j, i], typeof(BasicSpaceCell));
                         cellList.Add(logicCells[j, i]);
@@ -189,7 +189,7 @@
 
         private bool IsInField(Cell cell)
         {
-            if (cell.X < this.Weidth && cell.Y < this.Height)
+            if (cell.X < this.Weidth && cell.X >= 0 && cell.Y < this.Height && cell.Y >= 0)
             {
                 return true;
             }
