@@ -6,9 +6,7 @@ namespace Core
     public class MineCell : LogicCell, IDamaging
     {
         public MineCell()
-        {
-
-        }
+        { }
 
         public MineCell(Cell cell)
             : this(cell.X, cell.Y)

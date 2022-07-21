@@ -6,9 +6,7 @@ namespace Core
     public class BasicSpaceCell : SpaceCell
     {
         public BasicSpaceCell()
-        {
-
-        }
+        { }
 
         public BasicSpaceCell(Cell cell)
             : this(cell.X, cell.Y)

@@ -37,7 +37,7 @@
             this.GameOverLabel2 = new System.Windows.Forms.Label();
             this.FinishLabel = new System.Windows.Forms.Label();
             this.loadingLabel = new System.Windows.Forms.Label();
-            this.standartButton = new System.Windows.Forms.Button();
+            this.standardButton = new System.Windows.Forms.Button();
             this.customButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HeadLogo)).BeginInit();
@@ -116,18 +116,18 @@
             this.loadingLabel.Text = "loading...";
             this.loadingLabel.Visible = false;
             // 
-            // standartButton
+            // standardButton
             // 
-            this.standartButton.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.standartButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.standartButton.Font = new System.Drawing.Font("Bauhaus 93", 40.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.standartButton.Location = new System.Drawing.Point(434, 158);
-            this.standartButton.Name = "standartButton";
-            this.standartButton.Size = new System.Drawing.Size(339, 160);
-            this.standartButton.TabIndex = 7;
-            this.standartButton.Text = "standart";
-            this.standartButton.UseVisualStyleBackColor = false;
-            this.standartButton.Click += new System.EventHandler(this.standartButton_Click);
+            this.standardButton.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.standardButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.standardButton.Font = new System.Drawing.Font("Bauhaus 93", 40.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.standardButton.Location = new System.Drawing.Point(434, 158);
+            this.standardButton.Name = "standardButton";
+            this.standardButton.Size = new System.Drawing.Size(339, 160);
+            this.standardButton.TabIndex = 7;
+            this.standardButton.Text = "standard";
+            this.standardButton.UseVisualStyleBackColor = false;
+            this.standardButton.Click += new System.EventHandler(this.standartButton_Click);
             // 
             // customButton
             // 
@@ -148,7 +148,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Desktop;
             this.Controls.Add(this.customButton);
-            this.Controls.Add(this.standartButton);
+            this.Controls.Add(this.standardButton);
             this.Controls.Add(this.loadingLabel);
             this.Controls.Add(this.FinishLabel);
             this.Controls.Add(this.GameOverLabel2);
@@ -174,7 +174,7 @@
         private Label GameOverLabel2;
         private Label FinishLabel;
         private Label loadingLabel;
-        private Button standartButton;
+        private Button standardButton;
         private Button customButton;
     }
 }

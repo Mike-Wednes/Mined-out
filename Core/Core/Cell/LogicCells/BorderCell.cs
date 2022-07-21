@@ -6,9 +6,7 @@ namespace Core
     public class BorderCell : LogicCell, IImpassable
     {
         public BorderCell()
-        {
-
-        }
+        { }
 
         public BorderCell(Cell cell)
             : this(cell.X, cell.Y)

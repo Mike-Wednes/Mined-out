@@ -10,9 +10,7 @@ namespace Core
 
         public PlayerCell()
             :base()
-        {
-
-        }
+        { }
 
         public PlayerCell(PlayerCell cell)
             :this(cell.X, cell.Y)

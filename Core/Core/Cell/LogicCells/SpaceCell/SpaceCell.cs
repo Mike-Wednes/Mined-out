@@ -6,9 +6,7 @@ namespace Core
     public abstract class SpaceCell : LogicCell
     {
         public SpaceCell()
-        {
-
-        }
+        { }
 
         public SpaceCell(Cell cell)
             : this(cell.X, cell.Y)

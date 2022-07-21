@@ -51,7 +51,7 @@ namespace WinFormsUI.Layers
 
         private void start()
         {
-            standartButton.Hide();
+            standardButton.Hide();
             customButton.Hide();
             loadingLabel.Visible = true;
             logoTimer.Start();
