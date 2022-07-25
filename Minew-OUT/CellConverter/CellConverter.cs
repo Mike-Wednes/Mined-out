@@ -1,31 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core;
+﻿using Core;
 
-namespace Minew_OUT
+namespace WinFormsUI
 {
-    internal class CellConverter
+    public class CellConverter
     {
-        private readonly int cellScale;
-
-        public CellConverter(int cellScale)
-        {
-            this.cellScale = cellScale;
-        }
-
-        public Bitmap Convert(LogicCell cell)
+        public virtual Bitmap Convert(LogicCell cell)
         {
             string path = "Grafics/";
             if (cell.GetType() == typeof(PlayerCell))
             {
                 path += PlayerPath((PlayerCell)cell);
-            }
-            else if (cell.GetType() == typeof(MineCell))
-            {
-                path += "MineCell";
             }
             else if (cell.IsMarked)
             {

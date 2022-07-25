@@ -1,96 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Logic;
+﻿using Logic;
 using Core;
 
-namespace Minew_OUT.Layers
+namespace WinFormsUI.Layers
 {
     public partial class Game : UserControl
     {
-        private int cellScale;
-
-        private CellConverter converter;
-
         private MainForm mainForm;
 
-        public GameHandler gameHandler;
+        private GameHandler gameHandler;
 
-        private Bitmap bitmap;
+        private Dictionary<string, int> currentAnimationCadre;
+
+        private bool doProcessingKeys;
+
+        private CellDisplayer displayer;
 
         public Game(MainForm mainForm)
         {
             InitializeComponent();
-            SetScale();
             this.mainForm = mainForm;
-            gameHandler = new GameHandler(DisplayCell);
-            converter = new CellConverter(cellScale);
-            SetSizes();
+            displayer = new CellDisplayer(GetScale(), new CellConverter());
             PlaceBoxes();
-            bitmap = new Bitmap("Grafics/MineCell.bmp");
+            currentAnimationCadre = new Dictionary<string, int>()
+            {
+                {"HeadLogo", 1},
+                {"Loading", 1},
+            };
+            doProcessingKeys = true;
         }
 
-        private void SetScale()
+        private int GetScale()
         {
             int basicScale = 30;
-            var fieldSize = new Settings().FieldSize;
-            cellScale = basicScale * 21 / (17 + fieldSize * 4);
-        }
-
-        private void SetSizes()
-        {
-            this.Size = mainForm.Size;
-            var fieldSizeScaled = (gameHandler.GetFieldSize() * cellScale) + 5;
-            FieldArea.Size = new Size(fieldSizeScaled.X, fieldSizeScaled.Y);
-
+            var fieldSize = new Core.Settings().FieldSize;
+            return basicScale * 21 / (17 + fieldSize * 4);
         }
 
         private void PlaceBoxes()
         {
             Point formMiddle = new Point(mainForm.Width / 2, mainForm.Height / 2);
             Point fieldMiddle = new Point(FieldArea.Width / 2, FieldArea.Height / 2);
-            int headWeight = HeadPicture.Width / 2;
+            int headWeight = HeadLogo.Width / 2;
             FieldArea.Location = new Point(formMiddle.X - fieldMiddle.X, formMiddle.Y - fieldMiddle.Y);
-            HeadPicture.Location = new Point(formMiddle.X - headWeight);
+            HeadLogo.Location = new Point(formMiddle.X - headWeight);
         }
 
         private void Game_Load(object sender, EventArgs e)
         {
-            StartHeadDisplaying();
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(200);
-                gameHandler.DisplayField();
-            });
         }
 
+        private void start()
+        {
+            standardButton.Hide();
+            customButton.Hide();
+            loadingLabel.Visible = true;
+            logoTimer.Start();
+            gameHandler.DisplayField();
+            DoWithDelay(() => ShowField(), 500);
+        }
+
+        private void ShowField()
+        {
+            loadingLabel.Hide(); 
+            FieldArea.Visible = true; 
+            HeadLogo.Visible = true;
+        }
 
         private void DisplayCell(LogicCell cell)
         {
-            var cellBitmap = converter.Convert(cell);
-            FieldArea.CreateGraphics().DrawImage(cellBitmap, cell.X * cellScale, cell.Y * cellScale, cellScale, cellScale);
-        }
-
-        private void FieldArea_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void StartHeadDisplaying()
-        {
-            StartAnimation(HeadPicture, "HeadLogo", 140, 0, 330, 86);
+            displayer.DrawCell(FieldArea.Image, cell);
+            FieldArea.Refresh();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            TryMove(keyData);
-            TryMark(keyData);
+            if (doProcessingKeys)
+            {
+                TryMove(keyData);
+                TryMark(keyData);
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -105,15 +93,49 @@ namespace Minew_OUT.Layers
 
         private void CheckStepped()
         {
-            var stepped = gameHandler.GetSteppedCell();
-            if (stepped.GetType() == typeof(MineCell))
+            var stepped = gameHandler.GetCurrentCell();
+            if (stepped as IDamaging != null)
             {
-                DisplayAnimation(FieldArea, "Boom", (stepped.X - 1) * cellScale, (stepped.Y - 1) * cellScale, cellScale * 3, cellScale * 3);
-                gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
-                Thread.Sleep(1000);
-                mainForm.ChangeLayer(new StartMenu(mainForm));
-
+                gameHandler.ChangeType(stepped, typeof(BasicSpaceCell));
+                GameOver(stepped);
             }
+            if (stepped as IFinish != null)
+            {
+                Finish();
+            }
+        }
+
+        private void GameOver(Cell cell)
+        {
+            DisplayAnimation(FieldArea, "Boom", (cell.X - 1) * displayer.Scale, (cell.Y - 1) * displayer.Scale, displayer.Scale * 3, displayer.Scale * 3);
+            gameHandler.ChangeViewMode(typeof(MineCell), CellView.Visible);
+            DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
+            DoWithDelay(() => { GameOverLabel1.Visible = true; }, 2000);
+            DoWithDelay(() => { GameOverLabel2.Visible = true;}, 3000);
+            DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 5000);
+            doProcessingKeys = false;
+        }
+
+        private void Finish()
+        {
+            DoWithDelay(() => { FieldArea.Hide(); ClearLogo(); }, 1000);
+            DoWithDelay(() => { FinishLabel.Visible = true; }, 2000);
+            DoWithDelay(() => { mainForm.ChangeLayer(new StartMenu(mainForm)); }, 4000);
+            doProcessingKeys = false;
+        }
+
+        private void ClearLogo()
+        {
+            logoTimer.Stop();
+            HeadLogo.Refresh();
+        }
+
+        private void DoWithDelay(Action action, int delay)
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Tick += (Object? myObject, EventArgs myEventArgs) => { action(); timer.Stop(); };
+            timer.Interval = delay;
+            timer.Start();
         }
 
         private void TryMark(Keys keyData)
@@ -122,17 +144,6 @@ namespace Minew_OUT.Layers
             {
                 gameHandler.Mark(KeyStorage.KeyToDirection[keyData]);
             }
-        }
-
-        private void StartAnimation(PictureBox box, string name, int x, int y, int width, int height)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    DisplayAnimation(box, name, x, y, width, height);
-                }
-            });
         }
 
         private void DisplayAnimation(PictureBox box, string name, int x, int y, int width, int height)
@@ -171,6 +182,41 @@ namespace Minew_OUT.Layers
                 count++;
             }
             return bitmaps;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            DrawAnimationCadre("HeadLogo", 2, new Point(140, 0), new Point(330, 86));
+        }
+
+        private void DrawAnimationCadre(string animationName, int cadreAmount, Point size, Point location)
+        {
+            Bitmap picture = new Bitmap(@"Grafics\Animations\" + animationName + @"\" + currentAnimationCadre[animationName] + ".bmp");
+            var pictureBox = this.Controls.Find(animationName, false).First() as PictureBox;
+            if (pictureBox == null)
+            {
+                return;
+            }
+            pictureBox.CreateGraphics().DrawImage(picture, size.X, size.Y, location.X, location.Y);
+            currentAnimationCadre[animationName]++;
+            currentAnimationCadre[animationName] = currentAnimationCadre[animationName] > cadreAmount
+                ? 1
+                : currentAnimationCadre[animationName];
+        }
+
+        private void standartButton_Click(object sender, EventArgs e)
+        {
+            gameHandler = new GameHandler(DisplayCell);
+            start();
+        }
+
+        private void customButton_Click(object sender, EventArgs e)
+        {
+            var path = Level.PathFromDirectory();
+            var level = new Level(path);
+            gameHandler = new GameHandler(DisplayCell, level.ConvertToField());
+            displayer.Scale = 630 / Math.Max( level.Size.X, level.Size.Y );
+            start();
         }
     }
 }

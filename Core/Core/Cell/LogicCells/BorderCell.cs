@@ -1,7 +1,13 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
-    public class BorderCell : LogicCell
+    [DataContract]
+    public class BorderCell : LogicCell, IImpassable
     {
+        public BorderCell()
+        { }
+
         public BorderCell(Cell cell)
             : this(cell.X, cell.Y)
         { }

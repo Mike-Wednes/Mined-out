@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mined-OUT", "Minew-OUT\Mined-OUT.csproj", "{E9FCF014-164B-4061-9EFC-FAFFC7FB32F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mined-OUT_WinForms", "Minew-OUT\Mined-OUT_WinForms.csproj", "{E9FCF014-164B-4061-9EFC-FAFFC7FB32F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Logic\Logic.csproj", "{70517C9D-19C0-4819-B7B2-130DE968616C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core\Core.csproj", "{A9E12E64-D6D0-4590-ABCF-761F89824E92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mined-OUT_Console", "ConsoleUI\UI\Mined-OUT_Console.csproj", "{D598A05F-7548-4BFA-A275-64A6B7F91C8A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraficRedactor", "GraficRedactor\GraficRedactor.csproj", "{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +38,18 @@ Global
 		{A9E12E64-D6D0-4590-ABCF-761F89824E92}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A9E12E64-D6D0-4590-ABCF-761F89824E92}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{A9E12E64-D6D0-4590-ABCF-761F89824E92}.Test|Any CPU.Build.0 = Test|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{D598A05F-7548-4BFA-A275-64A6B7F91C8A}.Test|Any CPU.Build.0 = Test|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1260D14-3F7D-48A2-83ED-DC0A3D7EE81A}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

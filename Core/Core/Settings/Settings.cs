@@ -66,7 +66,7 @@ namespace Core
             }
         }
 
-        private void Record()
+        public void Record()
         {
             var name = @"Settings/Settings.json";
             var jsonformatter = new DataContractJsonSerializer(typeof(Settings));

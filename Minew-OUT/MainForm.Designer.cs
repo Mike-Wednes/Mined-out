@@ -1,4 +1,4 @@
-﻿namespace Minew_OUT
+﻿namespace WinFormsUI
 {
     partial class MainForm
     {
@@ -41,7 +41,7 @@
             this.MinimumSize = new System.Drawing.Size(1000, 600);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MainForm";
+            this.Text = "MINED-OUT";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 

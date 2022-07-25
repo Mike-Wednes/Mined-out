@@ -1,8 +1,16 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+
+namespace Core
 {
+    [DataContract]
     public class PlayerCell : LogicCell
     {
+        [DataMember]
         public int MinesAround { get; set; }
+
+        public PlayerCell()
+            :base()
+        { }
 
         public PlayerCell(PlayerCell cell)
             :this(cell.X, cell.Y)

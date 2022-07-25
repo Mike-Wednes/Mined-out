@@ -1,14 +1,23 @@
-﻿namespace Core
+﻿using System.Runtime.Serialization;
+using System.Reflection;
+
+namespace Core
 {
+    [DataContract, KnownType(typeof(BorderCell)), KnownType(typeof(BasicSpaceCell)), KnownType(typeof(FinishSpaceCell)), 
+        KnownType(typeof(MineCell)), KnownType(typeof(PlayerCell))]
     public abstract class LogicCell : Cell
     {
+        [DataMember]
         public CellView View { get; set; }
 
+        [DataMember]
         public bool IsVisited { get; set; }
 
+        [DataMember]
         public bool IsMarked { get; set; }
 
         public LogicCell()
+            :base()
         { }
 
         public LogicCell(Cell cell)
@@ -64,20 +73,26 @@
             { 
                 return; 
             }
-            sameCell.MapProperies(cell);
+            sameCell.MapProperties(cell);
             cell = sameCell;
         }
 
-        public void MapProperies(LogicCell sample)
+        public void MapProperties(LogicCell sample)
         {
-            var properties = this.GetType().GetProperties();
-            foreach (var property in properties)
+            var thisProperties = this.GetType().GetProperties();
+            var sampleProperties = sample.GetType().GetProperties();
+            var intersect = thisProperties.Intersect(sampleProperties);
+            foreach (var property in intersect)
             {
-                if (sample.GetType().GetProperty(property.Name) != null)
-                {
-                    this.GetType().GetProperty(property.Name)?.SetValue(this, property.GetValue(sample, null));
-                }
+                this.GetType().GetProperty(property.Name)?.SetValue(this, property.GetValue(sample, null));
+                SetProperty(property, property.GetValue(sample));
             }
+        }
+
+
+        public void SetProperty(PropertyInfo propInfo, object? value)
+        {
+            this.GetType().GetProperty(propInfo.Name)?.SetValue(this, value);
         }
     }
 }

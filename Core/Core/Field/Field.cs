@@ -12,9 +12,13 @@
 
         public int Difficulty { get; set; }
 
-        public LogicCell GetPlayer()
+        public Field(LogicCell[,] cells, PlayerCell player)
         {
-            return new PlayerCell(player);
+            logicCells = cells;
+            Height = cells.GetLength(0);
+            Weidth = cells.GetLength(1);
+            this.player = player;
+            SetPlayer();
         }
 
         public Field(int size, int difficulty)
@@ -37,6 +41,11 @@
             GenerateWay();
             AddMines();
             SetPlayer();
+        }
+
+        public LogicCell GetPlayer()
+        {
+            return new PlayerCell(player);
         }
 
         private void SetPlayer()
@@ -110,16 +119,15 @@
             return logicCells[position.Y, position.X];
         }
 
-        public List<LogicCell> GetMoveLine(Cell offset)
+        public List<LogicCell> GetMovePairCell(Cell offset)
         {
-            List<LogicCell> moveLine = new List<LogicCell>();
-
             CurrentPositionVisited();
-            moveLine.Add(logicCells[player.Y, player.X]);
-
+            List<LogicCell> moveLine = new List<LogicCell>()
+            {
+                logicCells[player.Y, player.X],
+                player
+            };
             MovePlayer(offset);
-            moveLine.Add(player);
-
             return moveLine;
         }
 
@@ -128,6 +136,30 @@
             player.MakeEqual(GetChangedPosition(player, offset));
             logicCells[player.Y, player.X].IsMarked = false;
             player.MinesAround = MinesAroundPlayer();
+        }
+
+        public List<LogicCell> ExplodeCells(Cell location)
+        {
+            List<LogicCell> cellList = new List<LogicCell>();
+            for (int j = location.Y - 1; j <= location.Y + 1; j++)
+            {
+                for (int i = location.X - 1; i <= location.X + 1; i++)
+                {
+                    if ((j != location.Y || i != location.X) && IsInField(new Cell(i, j)))
+                    {
+                        LogicCell.MapToType(ref logicCells[j, i], typeof(BasicSpaceCell));
+                        cellList.Add(logicCells[j, i]);
+                    }        
+                }
+            }
+            player.MinesAround = MinesAroundPlayer() - 1;
+            cellList.Add(player);
+            return cellList;
+        }
+
+        public void ChangeType(Cell cell, Type type)
+        {
+            LogicCell.MapToType(ref logicCells[cell.Y, cell.X], type);
         }
 
         private void CurrentPositionVisited()
@@ -143,7 +175,7 @@
             {
                 return new Cell(cellPosition + offset);
             }
-            return cellPosition;
+            return new Cell(cellPosition);
         }
 
         private bool CheckForMove(Cell cell)
@@ -157,7 +189,7 @@
 
         private bool IsInField(Cell cell)
         {
-            if (cell.X < this.Weidth && cell.Y < this.Height)
+            if (cell.X < this.Weidth && cell.X >= 0 && cell.Y < this.Height && cell.Y >= 0)
             {
                 return true;
             }
@@ -166,7 +198,7 @@
 
         private bool IsPassable(Cell cell)
         {
-            if((logicCells[cell.Y, cell.X] as BorderCell) != null)
+            if((logicCells[cell.Y, cell.X] as IImpassable) != null)
             {
                 return false;
             }
@@ -201,7 +233,7 @@
                 GenerateWay(stepHistory);
                 return;
             }
-            if (stepHistory.Last().Y == 1 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
+            if (IsNearFinish(stepHistory.Last()))
             {
                 return;
             }
@@ -219,6 +251,15 @@
             stepHistory.Add(newPosition);
             LogicCell.MapToType(ref logicCells[newPosition.Y, newPosition.X], typeof(WaySpaceCell));
             GenerateWay(stepHistory);   
+        }
+
+        private bool IsNearFinish(Cell cell)
+        {
+            if(logicCells[cell.Y - 1, cell.X] as IFinish != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         private Direction? FindProperDirection(List<LogicCell> stepHistory)
@@ -317,7 +358,6 @@
                     }
                 }
             }
-
             return count;
         }
 

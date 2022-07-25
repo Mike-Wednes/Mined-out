@@ -41,9 +41,19 @@ namespace Core
             return new Cell(cell.X + 1, cell.Y + 1);
         }
 
+        public static Cell operator --(Cell cell)
+        {
+            return new Cell(cell.X - 1, cell.Y - 1);
+        }
+
         public static Cell operator +(Cell first, Cell second)
         {
             return new Cell(first.X + second.X, first.Y + second.Y);
+        }
+
+        public static Cell operator -(Cell first, Cell second)
+        {
+            return new Cell(first.X - second.X, first.Y - second.Y);
         }
 
         public static Cell operator +(Cell first, int value)
@@ -58,12 +68,12 @@ namespace Core
 
         public override string ToString()
         {
-            return $"X:{X};Y:{Y}";
+            return $"X:{X}; Y:{Y}";
         }
 
         public static Cell Parse(string input)
         {
-            Regex filter = new Regex(@"X:(?<X>\d+);Y:(?<Y>\d+);");
+            Regex filter = new Regex(@"X:(?<X>\d+); Y:(?<Y>\d+);");
             var match = filter.Matches(input).First();
             int x = int.Parse(match.Groups["X"].Value);
             int y = int.Parse(match.Groups["Y"].Value);
