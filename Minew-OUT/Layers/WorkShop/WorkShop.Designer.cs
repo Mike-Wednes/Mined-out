@@ -50,6 +50,7 @@
             this.highlighterBox2 = new System.Windows.Forms.PictureBox();
             this.cursors = new System.Windows.Forms.GroupBox();
             this.lineCursorBox = new System.Windows.Forms.PictureBox();
+            this.polylineCursorBox = new System.Windows.Forms.PictureBox();
             this.dotCursorBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.FieldArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.heightNumeric)).BeginInit();
@@ -63,6 +64,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.highlighterBox2)).BeginInit();
             this.cursors.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineCursorBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.polylineCursorBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dotCursorBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -195,7 +197,7 @@
             // visibilityPicture
             // 
             this.visibilityPicture.Image = ((System.Drawing.Image)(resources.GetObject("visibilityPicture.Image")));
-            this.visibilityPicture.Location = new System.Drawing.Point(76, 290);
+            this.visibilityPicture.Location = new System.Drawing.Point(76, 237);
             this.visibilityPicture.Name = "visibilityPicture";
             this.visibilityPicture.Size = new System.Drawing.Size(60, 60);
             this.visibilityPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -213,7 +215,7 @@
             this.fieldParametersGroup.Controls.Add(this.widthNumeric);
             this.fieldParametersGroup.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.fieldParametersGroup.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.fieldParametersGroup.Location = new System.Drawing.Point(40, 70);
+            this.fieldParametersGroup.Location = new System.Drawing.Point(41, 79);
             this.fieldParametersGroup.Name = "fieldParametersGroup";
             this.fieldParametersGroup.Size = new System.Drawing.Size(160, 400);
             this.fieldParametersGroup.TabIndex = 19;
@@ -260,7 +262,7 @@
             // clearPicture
             // 
             this.clearPicture.Image = ((System.Drawing.Image)(resources.GetObject("clearPicture.Image")));
-            this.clearPicture.Location = new System.Drawing.Point(76, 159);
+            this.clearPicture.Location = new System.Drawing.Point(76, 145);
             this.clearPicture.Name = "clearPicture";
             this.clearPicture.Size = new System.Drawing.Size(60, 60);
             this.clearPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -276,9 +278,9 @@
             this.tools.Controls.Add(this.clearPicture);
             this.tools.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tools.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.tools.Location = new System.Drawing.Point(983, 70);
+            this.tools.Location = new System.Drawing.Point(983, 79);
             this.tools.Name = "tools";
-            this.tools.Size = new System.Drawing.Size(160, 400);
+            this.tools.Size = new System.Drawing.Size(160, 313);
             this.tools.TabIndex = 21;
             this.tools.TabStop = false;
             this.tools.Text = "tools";
@@ -306,12 +308,13 @@
             // cursors
             // 
             this.cursors.Controls.Add(this.lineCursorBox);
+            this.cursors.Controls.Add(this.polylineCursorBox);
             this.cursors.Controls.Add(this.dotCursorBox);
             this.cursors.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.cursors.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.cursors.Location = new System.Drawing.Point(983, 506);
+            this.cursors.Location = new System.Drawing.Point(983, 450);
             this.cursors.Name = "cursors";
-            this.cursors.Size = new System.Drawing.Size(160, 257);
+            this.cursors.Size = new System.Drawing.Size(160, 313);
             this.cursors.TabIndex = 23;
             this.cursors.TabStop = false;
             this.cursors.Text = "cursors";
@@ -319,18 +322,29 @@
             // lineCursorBox
             // 
             this.lineCursorBox.Image = ((System.Drawing.Image)(resources.GetObject("lineCursorBox.Image")));
-            this.lineCursorBox.Location = new System.Drawing.Point(76, 166);
+            this.lineCursorBox.Location = new System.Drawing.Point(76, 145);
             this.lineCursorBox.Name = "lineCursorBox";
             this.lineCursorBox.Size = new System.Drawing.Size(60, 60);
             this.lineCursorBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.lineCursorBox.TabIndex = 17;
+            this.lineCursorBox.TabIndex = 23;
             this.lineCursorBox.TabStop = false;
             this.lineCursorBox.Click += new System.EventHandler(this.lineCursorBox_Click);
+            // 
+            // polylineCursorBox
+            // 
+            this.polylineCursorBox.Image = ((System.Drawing.Image)(resources.GetObject("polylineCursorBox.Image")));
+            this.polylineCursorBox.Location = new System.Drawing.Point(76, 237);
+            this.polylineCursorBox.Name = "polylineCursorBox";
+            this.polylineCursorBox.Size = new System.Drawing.Size(60, 60);
+            this.polylineCursorBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.polylineCursorBox.TabIndex = 17;
+            this.polylineCursorBox.TabStop = false;
+            this.polylineCursorBox.Click += new System.EventHandler(this.polylineCursorBox_Click);
             // 
             // dotCursorBox
             // 
             this.dotCursorBox.Image = ((System.Drawing.Image)(resources.GetObject("dotCursorBox.Image")));
-            this.dotCursorBox.Location = new System.Drawing.Point(76, 43);
+            this.dotCursorBox.Location = new System.Drawing.Point(76, 55);
             this.dotCursorBox.Name = "dotCursorBox";
             this.dotCursorBox.Size = new System.Drawing.Size(60, 60);
             this.dotCursorBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -368,6 +382,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.highlighterBox2)).EndInit();
             this.cursors.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lineCursorBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.polylineCursorBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dotCursorBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -396,7 +411,8 @@
         private PictureBox highlighterBox1;
         private PictureBox highlighterBox2;
         private GroupBox cursors;
-        private PictureBox lineCursorBox;
+        private PictureBox polylineCursorBox;
         private PictureBox dotCursorBox;
+        private PictureBox lineCursorBox;
     }
 }

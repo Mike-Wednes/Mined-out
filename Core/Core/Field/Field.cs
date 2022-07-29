@@ -6,7 +6,7 @@
 
         private PlayerCell player;
 
-        public int Weidth { get; set; }
+        public int Width { get; set; }
 
         public int Height { get; set; }
 
@@ -16,27 +16,27 @@
         {
             logicCells = cells;
             Height = cells.GetLength(0);
-            Weidth = cells.GetLength(1);
+            Width = cells.GetLength(1);
             this.player = player;
             SetPlayer();
         }
 
         public Field(int size, int difficulty)
         {
-            Weidth = 17 + size * 4;
+            Width = 17 + size * 4;
             Height = 17 + size * 4;
             Difficulty = difficulty;
-            logicCells = new LogicCell[Height, Weidth];
-            player = new PlayerCell((Weidth - 1) / 2, Height - 1);
+            logicCells = new LogicCell[Height, Width];
+            player = new PlayerCell((Width - 1) / 2, Height - 1);
             GenerateField();
         }
 
         private void GenerateField()
         {
-            MakeGorizontalWall(typeof(FinishSpaceCell), 0);
-            MakeSideWall(0);
-            MakeSideWall(Weidth - 1);
-            MakeGorizontalWall(typeof(BasicSpaceCell), Height - 1);
+            MakeHorizontalWall(typeof(FinishSpaceCell), 0);
+            MakeVerticalWall(0);
+            MakeVerticalWall(Width - 1);
+            MakeHorizontalWall(typeof(BasicSpaceCell), Height - 1);
             AddSpace();
             GenerateWay();
             AddMines();
@@ -53,7 +53,7 @@
             player.MinesAround = MinesAroundPlayer();          
         }
 
-        private void MakeSideWall(int x)
+        private void MakeVerticalWall(int x)
         {
             for (int j = 1; j < Height - 1; j++)
             {
@@ -61,11 +61,11 @@
             }
         }
 
-        private void MakeGorizontalWall(Type spaceCellType, int y)
+        private void MakeHorizontalWall(Type spaceCellType, int y)
         {
-            for (int i = 0; i < Weidth; i++)
+            for (int i = 0; i < Width; i++)
             {
-                if (i >= (Weidth - 3) / 2 && i <= (Weidth + 1) / 2)
+                if (i >= (Width - 3) / 2 && i <= (Width + 1) / 2)
                 {
                     logicCells[y, i] = LogicCell.CreateCell(spaceCellType, i, y);
                 }
@@ -80,7 +80,7 @@
         {
             for (int j = 1; j < Height - 1; j++)
             {
-                for (int i = 1; i < Weidth - 1; i++)
+                for (int i = 1; i < Width - 1; i++)
                 {
                     logicCells[j, i] = new BasicSpaceCell(i, j);
                 }
@@ -89,7 +89,7 @@
 
         private void AddMines()
         {
-            int minesAmount = (Weidth - 2) * (Height - 2) / (5 - Difficulty);
+            int minesAmount = (Width - 2) * (Height - 2) / (5 - Difficulty);
             for (int i = 0; i < minesAmount; i++)
             {
                 SetProperMine();
@@ -102,10 +102,10 @@
             Cell cell;
             do
             {
-                cell = new Cell(rnd.Next(1, Weidth - 1), rnd.Next(1, Height - 1));
+                cell = new Cell(rnd.Next(1, Width - 1), rnd.Next(1, Height - 1));
             }
-            while (logicCells[cell.Y, cell.X].DoesFitType(typeof(MineCell))
-                || logicCells[cell.Y, cell.X].DoesFitType(typeof(WaySpaceCell)));
+            while (logicCells[cell.Y, cell.X] is MineCell
+                || logicCells[cell.Y, cell.X] is WaySpaceCell);
             LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(MineCell));
         }
 
@@ -180,29 +180,17 @@
 
         private bool CheckForMove(Cell cell)
         {
-            if(IsInField(cell) && IsPassable(cell))
-            {
-                return true;
-            }
-            return false;
+            return IsInField(cell) && IsPassable(cell);
         }
 
         private bool IsInField(Cell cell)
         {
-            if (cell.X < this.Weidth && cell.X >= 0 && cell.Y < this.Height && cell.Y >= 0)
-            {
-                return true;
-            }
-            return false;
+            return (cell.X < this.Width && cell.X >= 0 && cell.Y < this.Height && cell.Y >= 0);
         }
 
         private bool IsPassable(Cell cell)
         {
-            if((logicCells[cell.Y, cell.X] as IImpassable) != null)
-            {
-                return false;
-            }
-            return true;
+            return !(logicCells[cell.Y, cell.X] is IImpassable);
         }
 
         public int MinesAroundPlayer()
@@ -212,9 +200,9 @@
             {
                 for (int i = player.X - 1; i < player.X + 2; i++)
                 {
-                    if (i < this.Weidth && j < this.Height && i > 0 && j > 0)
+                    if (i < this.Width && j < this.Height && i > 0 && j > 0)
                     {
-                        if (logicCells[j, i].DoesFitType(typeof(MineCell)))
+                        if (logicCells[j, i] is MineCell)
                         {
                             count++;
                         }
@@ -255,11 +243,7 @@
 
         private bool IsNearFinish(Cell cell)
         {
-            if(logicCells[cell.Y - 1, cell.X] as IFinish != null)
-            {
-                return true;
-            }
-            return false;
+            return logicCells[cell.Y - 1, cell.X] is IFinish;
         }
 
         private Direction? FindProperDirection(List<LogicCell> stepHistory)
@@ -308,7 +292,7 @@
         {
             foreach (LogicCell cell in logicCells)
             {
-                if (cell.DoesFitType(typeof(WaySpaceCell)))
+                if (cell is WaySpaceCell)
                 {
                     LogicCell.MapToType(ref logicCells[cell.Y, cell.X], typeof(BasicSpaceCell));
                 }
@@ -317,16 +301,16 @@
 
         private bool IsDirectedFromExit(List<LogicCell> stepHistory, Cell newPosition)
         {
-            if (stepHistory.Last().Y == 2 && (stepHistory.Last().X >= (Weidth - 3) / 2 && stepHistory.Last().X <= (Weidth + 1) / 2))
+            if (stepHistory.Last().Y == 2 && (stepHistory.Last().X >= (Width - 3) / 2 && stepHistory.Last().X <= (Width + 1) / 2))
             {
-                if (newPosition.X >= (Weidth - 3) / 2 && newPosition.X <= (Weidth + 1) / 2 && stepHistory.Last().Y < newPosition.Y)
+                if (newPosition.X >= (Width - 3) / 2 && newPosition.X <= (Width + 1) / 2 && stepHistory.Last().Y < newPosition.Y)
                 {
-                    if ((stepHistory.Last().X == (Weidth - 3) / 2 || stepHistory.Last().X <= (Weidth + 1) / 2) && stepHistory[^2].X == (Weidth - 1) / 2)
+                    if ((stepHistory.Last().X == (Width - 3) / 2 || stepHistory.Last().X <= (Width + 1) / 2) && stepHistory[^2].X == (Width - 1) / 2)
                     {
                         return true;
                     }
                 }
-                if (newPosition.Y == 2 && (newPosition.X < (Weidth - 3) / 2 || newPosition.X > (Weidth + 1) / 2))
+                if (newPosition.Y == 2 && (newPosition.X < (Width - 3) / 2 || newPosition.X > (Width + 1) / 2))
                 {
                     return true;
                 }
@@ -342,7 +326,7 @@
             {
                 if (IsInField(new Cell(cell.X, j)))
                 {
-                    if (logicCells[j, cell.X].DoesFitType(typeof(WaySpaceCell)))
+                    if (logicCells[j, cell.X] is WaySpaceCell)
                     {
                         count++;
                     }
@@ -352,7 +336,7 @@
             {
                 if (IsInField(new Cell(i, cell.Y)))
                 {
-                    if (logicCells[cell.Y, i].DoesFitType(typeof(WaySpaceCell)))
+                    if (logicCells[cell.Y, i] is WaySpaceCell)
                     {
                         count++;
                     }
@@ -366,7 +350,7 @@
             var cells = new List<LogicCell>();
             foreach (LogicCell cell in logicCells)
             {
-                if (cell.DoesFitType(type))
+                if (cell.GetType() == type)
                 {
                     cell.View = view;
                     cells.Add(cell);

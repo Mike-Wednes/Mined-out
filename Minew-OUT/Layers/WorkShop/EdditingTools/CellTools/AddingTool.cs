@@ -11,7 +11,7 @@ namespace WinFormsUI
             this.cellType = cellType;
         }
 
-        public override LogicCell? GetEddited(Cell cell)
+        public override LogicCell? GetEdited(Cell cell)
         {
             var addingCell = LogicCell.CreateCell(cellType, cell.X, cell.Y);
             addingCell.View = CellView.Visible;

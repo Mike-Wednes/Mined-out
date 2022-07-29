@@ -212,7 +212,12 @@ namespace WinFormsUI.Layers
 
         private void customButton_Click(object sender, EventArgs e)
         {
-            var path = Level.PathFromDirectory();
+            var path = LevelDirectoryFormatter.Path();
+            if(path == "")
+            {
+                mainForm.ChangeLayer(new StartMenu(mainForm));
+                return;
+            }
             var level = new Level(path);
             gameHandler = new GameHandler(DisplayCell, level.ConvertToField());
             displayer.Scale = 630 / Math.Max( level.Size.X, level.Size.Y );
