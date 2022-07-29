@@ -4,7 +4,7 @@ namespace WinFormsUI
 {
     internal class ClearingTool : EdditingTool
     {
-        public override LogicCell? GetEddited(Cell cell)
+        public override LogicCell? GetEdited(Cell cell)
         {
             return null;
         }

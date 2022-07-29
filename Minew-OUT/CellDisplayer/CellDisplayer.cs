@@ -46,5 +46,12 @@ namespace WinFormsUI
             var fieldImageGraphics = Graphics.FromImage(fieldImage);
             fieldImageGraphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, 635, 635);
         }
+
+        public Cell CellOnPoint(Point location)
+        {
+            int x = (int)Math.Floor((double)location.X / Scale);
+            int y = (int)Math.Floor((double)location.Y / Scale);
+            return new Cell(x, y);
+        }
     }
 }

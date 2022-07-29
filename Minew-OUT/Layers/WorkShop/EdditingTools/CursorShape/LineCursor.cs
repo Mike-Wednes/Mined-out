@@ -13,32 +13,42 @@ namespace WinFormsUI
 
         public override void DoWithClick(Action<Cell> action, Cell location)
         {
+            bool isThisStart = false;
             if (lastCell == null)
             {
                 lastCell = location;
+                isThisStart = true;
             }
-            Cell difference = location - lastCell;
-            difference.X = Math.Abs(difference.X);
-            difference.Y = Math.Abs(difference.Y);
-            do
+            doInLine(action, lastCell, location);
+            if (!isThisStart)
             {
-                action(lastCell);
-                lastCell.X = IncrementDueToDirecion(lastCell.X, location.X);
-                lastCell.Y = IncrementDueToDirecion(lastCell.Y, location.Y);
-                difference--;
+                lastCell = null;
             }
-            while (difference.X >= 0 || difference.Y >= 0);
-            lastCell = location;
         }
 
-        private int IncrementDueToDirecion(int startValue, int endValue)
+        protected int IncrementDueToDirecion(int startValue, int endValue)
         {
             int difference = endValue - startValue;
-            if(difference == 0)
+            if (difference == 0)
             {
                 return startValue;
             }
             return startValue + difference / Math.Abs(difference);
+        }
+
+        protected void doInLine(Action<Cell> action, Cell start, Cell end)
+        {
+            Cell difference = end - start;
+            difference.X = Math.Abs(difference.X);
+            difference.Y = Math.Abs(difference.Y);
+            do
+            {
+                action(start);
+                start.X = IncrementDueToDirecion(start.X, end.X);
+                start.Y = IncrementDueToDirecion(start.Y, end.Y);
+                difference--;
+            }
+            while (difference.X >= 0 || difference.Y >= 0);
         }
     }
 }

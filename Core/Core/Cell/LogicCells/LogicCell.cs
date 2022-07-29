@@ -54,18 +54,6 @@ namespace Core
             return cell;
         }
 
-        public bool DoesFitType(Type type)
-        {
-            if (this.GetType() == type)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public static void MapToType(ref LogicCell cell, Type type)
         {
             var sameCell = CreateCell(type, cell);

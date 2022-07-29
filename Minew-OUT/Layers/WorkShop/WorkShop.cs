@@ -113,7 +113,7 @@ namespace WinFormsUI.Layers
 
         private void FieldArea_Click(object sender, EventArgs e)
         {
-            cursor.DoWithClick(useTool, locationUnderCursor());
+            cursor.DoWithClick(useTool, displayer.CellOnPoint(cursorOnControl(FieldArea)));
         }
 
         private void deleteAt(Cell location)
@@ -133,14 +133,12 @@ namespace WinFormsUI.Layers
             level.PlayerCell = player;
         }
 
-        private Cell locationUnderCursor()
+        private Point cursorOnControl(Control control)
         {
             Point location = this.PointToClient(Cursor.Position);
-            location.X -= FieldArea.Location.X;
-            location.Y -= FieldArea.Location.Y;
-            int x = (int)Math.Floor((double)location.X / displayer.Scale);
-            int y = (int)Math.Floor((double)location.Y / displayer.Scale);
-            return new Cell(x, y);
+            location.X -= control.Location.X;
+            location.Y -= control.Location.Y;
+            return location;
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
@@ -174,7 +172,7 @@ namespace WinFormsUI.Layers
 
         private void OpenMenuStrip_Click(object sender, EventArgs e)
         {
-            string path = Level.PathFromDirectory();
+            string path = LevelDirectoryFormatter.Path();
             if (path != "")
             {
                 setLevel(new Level(path));
@@ -183,7 +181,7 @@ namespace WinFormsUI.Layers
 
         private void saveMenuStip_Click(object sender, EventArgs e)
         {
-            level.Save();
+            LevelDirectoryFormatter.Save(level);
         }
 
         private void DoWithDelay(Action action, int delay)
@@ -222,11 +220,11 @@ namespace WinFormsUI.Layers
             if (cell != null)
             {
                 deleteAt(cell);
-                eddited = edditingTool.GetEddited(cell);
+                eddited = edditingTool.GetEdited(cell);
             }
             else
             {
-                eddited = edditingTool.GetEddited(location);
+                eddited = edditingTool.GetEdited(location);
             }
             if (eddited == null)
             {
@@ -256,6 +254,11 @@ namespace WinFormsUI.Layers
         private void dotCursorBox_Click(object sender, EventArgs e)
         {
             changeCursor(new DotCursor(), dotCursorBox);
+        }
+
+        private void polylineCursorBox_Click(object sender, EventArgs e)
+        {
+            changeCursor(new PolyLineCursor(), polylineCursorBox);
         }
 
         private void lineCursorBox_Click(object sender, EventArgs e)

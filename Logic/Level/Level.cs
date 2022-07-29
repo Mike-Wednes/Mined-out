@@ -60,50 +60,15 @@ namespace Logic
             return output;
         }
 
-        public void Save()
+        public void Save(string name)
         {
-            SaveToDirectory();
+            var jsonformatter = new DataContractJsonSerializer(this.GetType());
+            FileStream file = new FileStream(name, FileMode.Create);
+            jsonformatter.WriteObject(file, this);
+            file.Dispose();
         }
 
-        public static string PathFromDirectory()
-        {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.InitialDirectory = "Levels/";
-                openFileDialog.Filter = "json files (*.json)| *.json";
-                openFileDialog.FilterIndex = 2;
-                openFileDialog.RestoreDirectory = true;
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    return openFileDialog.FileName;
-                }
-            }
-            return "";
-        }
-
-        public void SaveToDirectory()
-        {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.InitialDirectory = "Levels/";
-                saveFileDialog.Filter = "json files (*.json)| *.json";
-                saveFileDialog.FilterIndex = 2;
-                saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.DefaultExt = "json";
-                saveFileDialog.FileName = adaptNameToPath();
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    var jsonformatter = new DataContractJsonSerializer(this.GetType());
-                    FileStream file = new FileStream(saveFileDialog.FileName, FileMode.Create);
-                    jsonformatter.WriteObject(file, this);
-                    file.Dispose();
-                }
-            }
-        }
-
-        private string adaptNameToPath()
+        public string AdaptNameToPath()
         {
             int index = 0;
             string fullName = name;
@@ -124,18 +89,33 @@ namespace Logic
             {
                 throw new Exception("no player found");
             }
+            var cellArray = levelCellMatrix();
+            addSpace(cellArray);
+            return new Field(cellArray, PlayerCell);
+        }
+
+        private LogicCell[,] levelCellMatrix()
+        {
             LogicCell[,] cellArray = new LogicCell[Size.Y, Size.X];
+            foreach (LogicCell cell in Cells)
+            {
+                cellArray[cell.Y, cell.X] = cell;
+            }
+            return cellArray;
+        }
+
+        private void addSpace(LogicCell[,] cellArray)
+        {
             for (int j = 0; j < Size.Y; j++)
             {
-                for(int i = 0; i < Size.X; i++)
+                for (int i = 0; i < Size.X; i++)
                 {
-                    var finded = Get(i, j);
-                    cellArray[j, i] = finded == null
-                        ? new BasicSpaceCell(i, j)
-                        : finded;
+                    if (cellArray[j, i] is null)
+                    {
+                        cellArray[j, i] = new BasicSpaceCell(i, j);
+                    }
                 }
             }
-            return new Field(cellArray, PlayerCell);
         }
 
         public LogicCell? Get(Cell location)

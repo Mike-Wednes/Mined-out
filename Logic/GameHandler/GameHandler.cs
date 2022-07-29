@@ -81,7 +81,7 @@ namespace Logic
 
         public Cell GetFieldSize()
         {
-            return new Cell(field.Weidth, field.Height);
+            return new Cell(field.Width, field.Height);
         }
     }
 }
