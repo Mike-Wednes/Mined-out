@@ -41,7 +41,6 @@ namespace WinFormsUI.Layers
         private void heighNumeric_ValueChanged(object sender, EventArgs e)
         {
             level.Size.Y = (int)heightNumeric.Value;
-            displayGrid();
             displayLevel();
         }
 

@@ -6,12 +6,8 @@
         {
             using (StreamReader sr = new StreamReader(@"UIEventsSettings\guideDone.txt"))
             {
-                if (sr.ReadToEnd() == "1")
-                {
-                    return true;
-                }
+                return sr.ReadToEnd() == "1";
             }
-            return false;
         }
 
         public static void WriteDone()
